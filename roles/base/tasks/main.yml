@@ -1,0 +1,45 @@
+---
+- name: Update cache
+  apt:
+    update_cache: yes
+
+- name: Upgrade packages
+  apt:
+    upgrade: all
+
+- name: Install packages
+  apt:
+    name: [
+      # ruby build requirements
+      'autoconf',
+      'bison',
+      'build-essential',
+      'dconf-cli',
+      'gcc6',
+      'libffi-dev',
+      'libgdbm-dev',
+      'libgdbm5',
+      'libncurses5-dev',
+      'libreadline6-dev',
+      'libsqlite3-dev',
+      'libssl-dev',
+      'libyaml-dev',
+      'nodejs',
+      'npm',
+      'xclip',
+      'zlib1g-dev',
+      # workflow requirements
+      'git',
+      'net-tools',
+      'redis-server',
+      's3cmd',
+      'silversearcher-ag',
+      'tmux',
+      'tree',
+      'wkhtmltopdf',
+      'zip',
+      # Ansible plugins requirements
+      'python-pexpect',
+      'python-pip',
+      'python-psycopg2'
+    ]

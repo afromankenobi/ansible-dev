@@ -1,0 +1,12 @@
+---
+- name: Provision dev server
+  become: true
+  hosts: all
+
+  roles:
+    - base # packages used for everything else
+    - postgresql
+    - yarn
+    - rbenv
+    - dotfiles
+    - neovim

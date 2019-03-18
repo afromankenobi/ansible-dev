@@ -1,0 +1,38 @@
+- name: Add PostgreSQL repository key
+  apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    state: present
+
+- name: Add PostgreSQL repository
+  apt_repository:
+    repo: 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main'
+    state: present
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install PostgreSQL server
+  apt:
+    name: [
+      "postgresql-{{ postgresql_version }}",
+      "postgresql-{{ postgresql_version }}-client",
+      'libpq-dev'
+    ]
+
+- name: Copy PostgreSQL config
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/postgresql/{{ postgresql_version }}/main/{{ item }}"
+    backup: yes
+  with_items:
+  - pg_hba.conf
+  notify: restart postgresql
+
+- name: DB user
+  become_user: postgres
+  postgresql_user:
+    name: "admin"
+    password: "admin.1234"
+    role_attr_flags: SUPERUSER
+    encrypted: yes

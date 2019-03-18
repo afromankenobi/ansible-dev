@@ -1,0 +1,52 @@
+---
+- name: Neovim Repository
+  apt_repository:
+    repo: ppa:neovim-ppa/stable
+
+- name: Install packages
+  apt:
+    update_cache: yes
+    name: [
+      'python-dev',
+      'python-pip',
+      'python3-dev',
+      'python3-pip',
+      'neovim'
+    ]
+
+- name: Add nodejs support
+  command: npm install -g neovim
+
+- name: Add Ruby support
+  become: false
+  command: gem install neovim
+
+- name: Create config folder
+  become: false
+  file: path=~/.config/ state=directory
+
+- name: link .vim to neovim folder
+  become: false
+  file:
+    src: ~/.vim
+    dest: ~/.config/nvim
+    state: link
+
+- name: link .vimrc to neovim file
+  become: false
+  file:
+    src: ~/.vimrc
+    dest: ~/.config/nvim/init.vim
+    state: link
+    force: yes
+
+- name: update alternatives
+  alternatives:
+    name: "{{ item }}"
+    path: /usr/lib/nvim
+    priority: 60
+  with_items:
+    - vi
+    - vim
+    - editor
+
