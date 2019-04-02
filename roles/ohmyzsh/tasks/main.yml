@@ -1,13 +1,26 @@
 - name: Install zsh
-  pacman:
+  apt:
     name: zsh
-    state: present
 
 - name: Clone OhmyZsh
   become: false
   git:
     repo: https://github.com/robbyrussell/oh-my-zsh.git 
     dest: ~/.oh-my-zsh
+    accept_hostkey: yes
+
+- name: Clone fish like autosuggestions
+  become: false
+  git:
+    repo: https://github.com/zsh-users/zsh-autosuggestions
+    dest: ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+    accept_hostkey: yes
+
+- name: Clone fish like syntax highlighting
+  become: false
+  git:
+    repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
+    dest: ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
     accept_hostkey: yes
 
 - name: Default shell
