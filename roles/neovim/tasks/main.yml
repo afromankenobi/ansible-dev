@@ -19,11 +19,15 @@
 
 - name: Add Ruby support
   become: false
-  command: gem install neovim
+  shell: '. ~/.rbenv.sh && gem install neovim'
 
 - name: Create config folder
   become: false
   file: path=~/.config/ state=directory
+
+- name: Create vim config folder
+  become: false
+  file: path=~/.vim state=directory
 
 - name: link .vim to neovim folder
   become: false
@@ -43,7 +47,7 @@
 - name: update alternatives
   alternatives:
     name: "{{ item }}"
-    path: /usr/lib/nvim
+    path: /usr/bin/nvim
     priority: 60
   with_items:
     - vi
