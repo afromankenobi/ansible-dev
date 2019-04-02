@@ -5,7 +5,7 @@
 
 - name: Upgrade packages
   apt:
-    upgrade: all
+    upgrade: full
 
 - name: Install packages
   apt:
@@ -15,22 +15,27 @@
       'bison',
       'build-essential',
       'dconf-cli',
-      'gcc6',
+      'gcc-6',
       'libffi-dev',
       'libgdbm-dev',
       'libgdbm5',
       'libncurses5-dev',
       'libreadline6-dev',
       'libsqlite3-dev',
-      'libssl-dev',
+      'libssl1.0-dev',
+      'nodejs-dev',
+      'node-gyp',
       'libyaml-dev',
       'nodejs',
       'npm',
       'xclip',
       'zlib1g-dev',
       # workflow requirements
+      'autojump',
       'git',
+      'gitg',
       'net-tools',
+      'peco',
       'redis-server',
       's3cmd',
       'silversearcher-ag',
@@ -38,6 +43,7 @@
       'tree',
       'wkhtmltopdf',
       'zip',
+      'zsh-syntax-highlighting',
       # Ansible plugins requirements
       'python-pexpect',
       'python-pip',
