@@ -16,7 +16,7 @@
   apt:
     name: [
       "postgresql-{{ postgresql_version }}",
-      "postgresql-{{ postgresql_version }}-client",
+      "postgresql-client-{{ postgresql_version }}",
       'libpq-dev'
     ]
 
