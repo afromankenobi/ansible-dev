@@ -1,7 +1,7 @@
 - name: Clone dotfiles
   become: false
   git:
-    repo: ssh://github.com/afromankenobi/dotfiles.git
+    repo: git@github.com:afromankenobi/dotfiles.git
     dest: ~/dotfiles
     accept_hostkey: true
 
