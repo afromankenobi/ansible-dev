@@ -32,6 +32,8 @@
       'zlib1g-dev',
       # workflow requirements
       'autojump',
+      'dialog',
+      'dos2unix',
       'git',
       'gitg',
       'net-tools',
@@ -41,6 +43,8 @@
       'silversearcher-ag',
       'tmux',
       'tree',
+      'uchardet',
+      'whois',
       'wkhtmltopdf',
       'zip',
       'zsh-syntax-highlighting',
