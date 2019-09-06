@@ -1,2 +1,5 @@
 ---
-postgresql_version: 11
+version: 11
+repo: "deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main"
+db_user: "demo_user"
+db_password: "demo_password"

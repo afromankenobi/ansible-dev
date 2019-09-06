@@ -5,7 +5,7 @@
 
 - name: Add PostgreSQL repository
   apt_repository:
-    repo: 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main'
+    repo: "{{ repo }}"
     state: present
 
 - name: Update apt cache
@@ -15,15 +15,15 @@
 - name: Install PostgreSQL server
   apt:
     name: [
-      "postgresql-{{ postgresql_version }}",
-      "postgresql-client-{{ postgresql_version }}",
+      "postgresql-{{ version }}",
+      "postgresql-client-{{ version }}",
       'libpq-dev'
     ]
 
 - name: Copy PostgreSQL config
   copy:
     src: "{{ item }}"
-    dest: "/etc/postgresql/{{ postgresql_version }}/main/{{ item }}"
+    dest: "/etc/postgresql/{{ version }}/main/{{ item }}"
     backup: yes
   with_items:
   - pg_hba.conf
@@ -32,7 +32,7 @@
 - name: DB user
   become_user: postgres
   postgresql_user:
-    name: "admin"
-    password: "admin.1234"
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
     role_attr_flags: SUPERUSER
     encrypted: yes
