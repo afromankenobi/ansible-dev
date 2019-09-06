@@ -1,0 +1,10 @@
+
+---
+- name: Neovim Repository
+  apt_repository:
+    repo: ppa:zeal-developers/ppa
+
+- name: Install packages
+  apt:
+    update_cache: yes
+    name: zeal

@@ -8,6 +8,7 @@
     - postgresql
     - yarn
     - rbenv
+    - zeal
     - dotfiles
     - neovim
     - ohmyzsh
