@@ -1,7 +1,7 @@
 ---
 - name: Provision dev server
   become: true
-  hosts: all
+  hosts: localhost
 
   roles:
     - base # packages used for everything else
