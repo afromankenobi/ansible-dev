@@ -1,7 +1,7 @@
 ruby_versions:
 - 2.5.5
-- 2.6.2
+- 2.6.4
 
-ruby_default: 2.6.2
+ruby_default: 2.6.4
 
 rbenv_root: ~/.rbenv
