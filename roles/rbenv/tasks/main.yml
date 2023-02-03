@@ -1,29 +1,7 @@
-- name: Clone rbenv
-  become: false
-  git:
-    repo: https://github.com/rbenv/rbenv.git
-    dest: ~/.rbenv
-    accept_hostkey: yes
-
-- name: Compile dynamic extension to speed up rbenv
-  become: false
-  shell: "cd ~/.rbenv && src/configure && make -C src"
-
-- name: Create rbenv plugins folder
-  become: false
-  file:
-    path: ~/.rbenv/plugins
-    state: directory
-
-- name: Install RubyBuild
-  become: false
-  git:
-    repo: https://github.com/rbenv/ruby-build.git
-    dest: ~/.rbenv/plugins/ruby-build
-    accept_hostkey: yes
+- include_tasks: setup-debian.yml
+  when: ansible_os_family == 'Debian'
 
 - name: Copy rbenv start script
-  become: false
   copy:
     src: rbenv.sh
     dest: ~/.rbenv.sh
@@ -37,15 +15,17 @@
     regexp: 'rbenv.sh$'
     line: 'source ~/.rbenv.sh'
 
+- name: Register rbenv root
+  shell:  rbenv root
+  register: rbenv_root
+
 - name: Install selected Rubies
-  become: false
-  command: "{{ rbenv_root }}/bin/rbenv install {{ item }}"
-  with_items: "{{ ruby_versions }}"
-  args:
-    creates: '{{ rbenv_root }}/versions/{{ item }}/bin/ruby'
+  ansible.builtin.command:
+    cmd: "rbenv install {{ item }} -s"
+    creates: "{{ rbenv_root }}/versions/{{ item }}/bin/ruby"
+  loop: "{{ ruby_versions }}"
 
 - name: Make ruby default
-  become: false
-  command: "$HOME/.rbenv/bin/rbenv global {{ ruby_default }}"
+  command: "rbenv global {{ ruby_default }}"
   args:
-    creates: '{{ rbenv_root }}/version'
+    creates: "{{ rbenv_root }}/version"

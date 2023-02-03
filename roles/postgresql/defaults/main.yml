@@ -1,5 +1,5 @@
 ---
-version: 11
+version: 14
 repo: "deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main"
-db_user: "demo_user"
-db_password: "demo_password"
+db_user: "admin"
+db_password: "admin"

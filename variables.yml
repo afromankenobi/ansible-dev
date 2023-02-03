@@ -1,0 +1,130 @@
+---
+downloads: ~/Downloads/ansible
+
+configure_osx: true
+configure_sudoers: false
+# Example:
+# sudoers_custom_config: |
+#   # Allow users in admin group to use sudo with no password.
+#   %admin ALL=(ALL) NOPASSWD: ALL
+
+homebrew_installed_packages:
+  - ansible
+  - autoconf
+  - autojump
+  - bat
+  - bash-completion
+  - bison
+  - cmake
+  - cowsay
+  - dialog
+  - dos2unix
+  - doxygen
+  - fd
+  - ffmpeg
+  - findutils
+  - fossil
+  - gettext
+  - gifsicle
+  - git
+  - gitg
+  - github/gh/gh
+  - go
+  - gpg
+  - graphviz
+  - haproxy
+  - htop
+  - httpie
+  - imagemagick
+  - iperf
+  - jq
+  - libevent
+  - libpq
+  - libwebm
+  - lsusb
+  - mcrypt
+  - mysql
+  - nmap
+  - node
+  - nvim
+  - nvm
+  - openssl
+  - openssl@3
+  - p7zip
+  - peco
+  - php
+  - postgresql
+  - pv
+  - rbenv
+  - readline
+  - redis
+  - ripgrep
+  - rust
+  - s3cmd
+  - sqlite
+  - sqlite3
+  - ssh-copy-id
+  - svn
+  - the_silver_searcher
+  - tig
+  - tmux
+  - tree
+  - tree-sitter
+  - uchardet
+  - vim
+  - viu
+  - wget
+  - whois
+    # - wkhtmltopdf
+  - wrk
+  - yarn
+  - zip
+  - zsh-history-substring-search
+  - zsh-syntax-highlighting
+
+homebrew_taps:
+  - homebrew/core
+  - homebrew/cask
+  - homebrew/cask-fonts
+
+homebrew_cask_appdir: /Applications
+homebrew_cask_apps:
+  - chromedriver
+  - docker
+  - firefox
+  - google-chrome
+  - handbrake
+  - licecap
+  - slack
+  - sublime-text
+  - dbeaver-community
+  - font-hack-nerd-font
+
+configure_dock: true
+dockitems_remove:
+  - Launchpad
+  - TV
+  - Podcasts
+  - 'App Store'
+  - 'Contacts'
+  - 'Facetime'
+  - Mail
+  - Messages
+  - Keynote
+  - Music
+
+dockitems_persist:
+  - name: "iTerm"
+    path: "/Applications/iTerm.app/"
+    pos: 1
+  - name: "Slack"
+    path: "/Applications/Slack.app/"
+    pos: 2
+  - name: "iA Writer"
+    path: "/Applications/iTerm.app/"
+    pos: 3
+  - name: "Be Focused"
+    path: "/Applications/Be Focused Pro.app/"
+    pos: 4
+
+osx_script: "./osx --no-restart"

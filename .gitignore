@@ -1,5 +1,9 @@
 **.un~
-**~
 **cloudimg-console.log
+**~
+*.retry
+*.vagrant
+.DS_Store
 .vagrant
 playbook.retry
+roles/geerlingguy*

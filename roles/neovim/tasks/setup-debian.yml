@@ -1,0 +1,25 @@
+- name: Neovim Repository
+  apt_repository:
+    repo: ppa:neovim-ppa/stable
+
+- name: Install packages
+  apt:
+    update_cache: yes
+    name: [
+      'python-dev',
+      'python-pip',
+      'python3-dev',
+      'python3-pip',
+      'neovim'
+    ]
+
+- name: update alternatives
+  alternatives:
+    name: "{{ item }}"
+    path: /usr/bin/nvim
+    priority: 60
+  with_items:
+    - vi
+    - vim
+    - editor
+

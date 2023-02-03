@@ -1,15 +1,25 @@
 ---
-- name: Provision dev server
-  become: true
-  hosts: localhost
+- hosts: all
+  name: Provision dev server
+
+  vars_files:
+    - variables.yml
 
   roles:
-    - base # packages used for everything else
-    - postgresql
-    - yarn
-    - rbenv
-    - zeal
-    - dotfiles
-    - neovim
-    - ohmyzsh
-    - virtualbox
+    - role: elliotweiser.osx-command-line-tools
+    - role: geerlingguy.mac.homebrew
+      tags: ['homebrew']
+    - role: geerlingguy.mac.dock
+      when: configure_dock
+      tags: ['dock']
+    - role: "./postgresql"
+    - role: "./rbenv"
+    - role: "./neovim"
+
+  tasks:
+    - import_tasks: tasks/sudoers.yml
+      when: configure_sudoers
+      tags: ['sudoers']
+    - import_tasks: tasks/osx.yml
+      when: configure_osx
+      tags: ['osx']
