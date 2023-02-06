@@ -89,8 +89,9 @@ homebrew_taps:
 
 homebrew_cask_appdir: /Applications
 homebrew_cask_apps:
+  - alt-tab
   - chromedriver
-  - docker
+    # - docker
   - firefox
   - google-chrome
   - handbrake
