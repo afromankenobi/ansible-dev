@@ -208,6 +208,13 @@ defaults write com.apple.messageshelper.MessageController SOInputLineSettings -d
 defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "continuousSpellCheckingEnabled" -bool false
 
 ###############################################################################
+# Rosseta for Docker compatibility
+###############################################################################
+# Docker on OSX requires to Install Rosseta2
+
+softwareupdate --install-rosetta
+
+###############################################################################
 # Kill/restart affected applications                                          #
 ###############################################################################
 # Restart affected applications if `--no-restart` flag is not present.
