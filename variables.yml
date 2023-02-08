@@ -99,20 +99,19 @@ homebrew_cask_apps:
   - slack
   - sublime-text
   - dbeaver-community
-  - font-hack-nerd-font
+  - postman
+  - insomnia
 
 configure_dock: true
 dockitems_remove:
   - Launchpad
   - TV
   - Podcasts
-  - 'App Store'
-  - 'Contacts'
-  - 'Facetime'
   - Mail
   - Messages
   - Keynote
   - Music
+  - Reminders
 
 dockitems_persist:
   - name: "iTerm"
@@ -121,11 +120,14 @@ dockitems_persist:
   - name: "Slack"
     path: "/Applications/Slack.app/"
     pos: 2
-  - name: "iA Writer"
-    path: "/Applications/iTerm.app/"
-    pos: 3
   - name: "Be Focused"
     path: "/Applications/Be Focused Pro.app/"
+    pos: 3
+  - name: "Telegram"
+    path: "/Applications/Telegram.app/"
+    pos: 4
+  - name: "Licecap"
+    path: "/Applications/Licecap.app/"
     pos: 4
 
 osx_script: "./osx --no-restart"
