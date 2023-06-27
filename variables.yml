@@ -8,15 +8,47 @@ configure_sudoers: false
 #   # Allow users in admin group to use sudo with no password.
 #   %admin ALL=(ALL) NOPASSWD: ALL
 
+osx_script: "./osx --no-restart"
+
+mas_installed_apps:
+  - { id: 1055511498, name: 'Day One' }
+  - { id: 1087284172, name: 'Focus Matrix : Task Manager' }
+  - { id: 1352778147, name: 'Bitwarden' }
+  - { id: 1402042596, name: 'AdBlock' }
+  - { id: 1458969831, name: JSONPeep }
+  - { id: 1462114288, name: 'Grammarly for Safari' }
+  - { id: 1475303629, name: 'Dear Reader' }
+  - { id: 1480933944, name: 'Vimari' }
+  - { id: 1482920575, name: 'DuckDuckGo Privacy for Safari' }
+  - { id: 1484348796, name: 'Endel' }
+  - { id: 408981434, name: "iMovie" }
+  - { id: 409183694, name: "Keynote" }
+  - { id: 409201541, name: "Pages" }
+  - { id: 409203825, name: "Numbers" }
+  - { id: 441258766, name: 'Magnet' }
+  - { id: 462054704, name: 'Microsoft Word' }
+  - { id: 462058435, name: 'Microsoft Excel' }
+  - { id: 462062816, name: 'Microsoft PowerPoint' }
+  - { id: 497799835, name: 'Xcode' }
+  - { id: 595191960, name: 'CopyClip' }
+  - { id: 668208984, name: 'GIPHY CAPTURE' }
+  - { id: 682658836, name: "GarageBand" } 
+  - { id: 747648890, name: 'Telegram' }
+  - { id: 775737590, name: 'iA Writer' }
+  - { id: 779363176, name: 'House Designer' }
+  - { id: 823766827, name: 'OneDrive' }
+  - { id: 961632517, name: 'Be Focused Pro: Pomodoro Timer' }
+mas_upgrade_all_apps: true
+
 homebrew_installed_packages:
   - ansible
   - autoconf
-  - autojump
-  - bat
   - bash-completion
+  - bat
   - bison
   - cmake
   - cowsay
+  - git-delta
   - dialog
   - dos2unix
   - doxygen
@@ -29,6 +61,7 @@ homebrew_installed_packages:
   - git
   - gitg
   - github/gh/gh
+  - gnu-sed
   - go
   - gpg
   - graphviz
@@ -39,11 +72,17 @@ homebrew_installed_packages:
   - iperf
   - jq
   - libevent
+  - fzf
+  - zoxide
+  - exa
+  - zsh-autosuggestions
   - libpq
   - libwebm
   - lsusb
+  - mas
   - mcrypt
   - mysql
+  - mosh
   - nmap
   - node
   - nvim
@@ -64,6 +103,7 @@ homebrew_installed_packages:
   - sqlite
   - sqlite3
   - ssh-copy-id
+  - starship
   - svn
   - the_silver_searcher
   - tig
@@ -75,7 +115,7 @@ homebrew_installed_packages:
   - viu
   - wget
   - whois
-    # - wkhtmltopdf
+  # - wkhtmltopdf
   - wrk
   - yarn
   - zip
@@ -91,12 +131,11 @@ homebrew_cask_appdir: /Applications
 homebrew_cask_apps:
   - alt-tab
   - chromedriver
-    # - docker
+  - docker
   - firefox
   - google-chrome
   - handbrake
   - licecap
-  - slack
   - sublime-text
   - dbeaver-community
   - postman
@@ -105,29 +144,19 @@ homebrew_cask_apps:
 configure_dock: true
 dockitems_remove:
   - Launchpad
-  - TV
-  - Podcasts
-  - Mail
-  - Messages
   - Keynote
-  - Music
   - Reminders
 
 dockitems_persist:
   - name: "iTerm"
     path: "/Applications/iTerm.app/"
     pos: 1
-  - name: "Slack"
-    path: "/Applications/Slack.app/"
-    pos: 2
   - name: "Be Focused"
     path: "/Applications/Be Focused Pro.app/"
-    pos: 3
+    pos: 2
   - name: "Telegram"
     path: "/Applications/Telegram.app/"
-    pos: 4
+    pos: 3
   - name: "Licecap"
     path: "/Applications/Licecap.app/"
     pos: 4
-
-osx_script: "./osx --no-restart"

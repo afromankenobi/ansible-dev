@@ -36,5 +36,3 @@ dockitems_persist:
     path: "/Applications/Sublime Text.app/"
     pos: 5
 ```
-
-## 
