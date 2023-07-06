@@ -2,9 +2,9 @@
 - hosts: all
   name: Provision dev server
 
-- import_playbook: macos.yml
+- import_playbook: macos/setup.yml
   when: ansible_os_family == "Darwin"
-- import_playbook: debian.yml
+- import_playbook: debian/setup.yml
   when: ansible_os_family == "Debian"
 
   roles:
