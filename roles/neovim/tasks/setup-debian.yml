@@ -19,7 +19,5 @@
     path: /usr/bin/nvim
     priority: 60
   with_items:
-    - vi
-    - vim
     - editor
 

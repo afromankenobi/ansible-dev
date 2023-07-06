@@ -2,6 +2,5 @@
 
 roles:
   - base
-  - ohmyzsh
   - yarn
   - dotfiles
