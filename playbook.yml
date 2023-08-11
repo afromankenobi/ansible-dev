@@ -2,36 +2,43 @@
 - hosts: all
   name: Provision dev server
 
-  - block:
-    - name: Include variables from a file
-      include_vars: macos/variables.yml
+  tasks:
+    - block:
+        - name: Include variables from a file
+          include_vars: macos/variables.yml
 
-    - name: Include macOS setup
-      include_tasks: macos/tasks/sudoers.yml
-      when: configure_sudoers
-      tags: ['sudoers']
+        - name: Include macOS setup
+          include_tasks: macos/tasks/sudoers.yml
+          when: configure_sudoers
+          tags: ['sudoers']
 
-    - name: Include macOS setup
-      include_tasks: macos/tasks/osx.yml
-      when: configure_osx
-      tags: ['osx']
+        - name: Include macOS setup
+          include_tasks: macos/tasks/osx.yml
+          when: configure_osx
+          tags: ['osx']
 
-    - name: Include macOS roles
-      include_role:
-        name: "{{ item }}"
-      loop:
-        - elliotweiser.osx-command-line-tools
-        - geerlingguy.mac.homebrew
-        - geerlingguy.mac.mas
-        - geerlingguy.mac.dock
-  when: ansible_os_family == "Darwin"
+        - name: Include macOS roles
+          include_role:
+            name: "{{ item }}"
+          loop:
+            - elliotweiser.osx-command-line-tools
+            - geerlingguy.mac.homebrew
+            - geerlingguy.mac.mas
+            - geerlingguy.mac.dock
+      when: ansible_os_family == "Darwin"
 
-- name: Include Debian setup
-  include_tasks: debian/setup.yml
-  when: ansible_os_family == "Debian"
-
+    - name: Include Debian setup
+      include_tasks: debian/setup-debian.yml
+      when: ansible_os_family == "Debian"
 
   roles:
-    - postgresql
+    - rust
+    - role: debian/roles/base
+      when: ansible_os_family == "Debian"
+    - role: roles/yarn
+      when: ansible_os_family == "Debian"
+    - nvm
     - rbenv
+    - ohmyzsh
     - neovim
+    - dotfiles

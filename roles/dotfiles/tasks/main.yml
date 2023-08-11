@@ -1,12 +1,10 @@
 - name: Clone dotfiles
-  become: false
   git:
     repo: git@github.com:afromankenobi/dotfiles.git
     dest: ~/dotfiles
     accept_hostkey: true
 
 - name: Link vim config
-  become: false
   file:
     src: "~/dotfiles/vim/{{ item }}"
     dest: "~/.{{ item }}"
@@ -16,14 +14,12 @@
     - vimrc.bundles
 
 - name: Link tmux
-  become: false
   file:
     src: "~/dotfiles/tmux/tmux.conf"
     dest: "~/.tmux.conf"
     state: link
 
 - name: Link ohmyzsh
-  become: false
   file:
     src: "~/dotfiles/zshrc"
     dest: "~/.zshrc"

@@ -7,26 +7,21 @@
   command: npm install -g neovim
 
 - name: Add Ruby support
-  become: false
   shell: '. ~/.rbenv.sh && gem install neovim'
 
 - name: Create config folder
-  become: false
   file: path=~/.config/ state=directory
 
 - name: Create vim config folder
-  become: false
   file: path=~/.vim state=directory
 
 - name: link .vim to neovim folder
-  become: false
   file:
     src: ~/.vim
     dest: ~/.config/nvim
     state: link
 
 - name: link .vimrc to neovim file
-  become: false
   file:
     src: ~/.vimrc
     dest: ~/.config/nvim/init.vim

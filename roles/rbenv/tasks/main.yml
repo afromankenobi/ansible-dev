@@ -2,6 +2,7 @@
   when: ansible_os_family == 'Debian'
 
 - name: Copy rbenv start script
+  become: false
   copy:
     src: rbenv.sh
     dest: ~/.rbenv.sh
@@ -14,19 +15,22 @@
     state: present
     create: true
     regexp: 'rbenv.sh$'
-    line: 'source ~/.rbenv.sh'
+    line: '. ~/.rbenv.sh'
 
 - name: Register rbenv root
-  shell:  rbenv root
+  become: false
+  shell: ". ~/.rbenv.sh && rbenv root"
   register: rbenv_root
 
 - name: Install selected Rubies
+  become: false
   ansible.builtin.command:
     cmd: "rbenv install {{ item }} -s"
     creates: "{{ rbenv_root }}/versions/{{ item }}/bin/ruby"
   loop: "{{ ruby_versions }}"
 
 - name: Make ruby default
+  become: false
   command: "rbenv global {{ ruby_default }}"
   args:
     creates: "{{ rbenv_root }}/version"

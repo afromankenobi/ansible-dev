@@ -1,40 +1,46 @@
 ---
 - name: Update cache
+  become: true
   apt:
     update_cache: yes
 
 - name: Upgrade packages
+  become: true
   apt:
     upgrade: full
 
 - name: Install packages
+  become: true
   apt:
     name: [
       # ruby build requirements
       'autoconf',
       'bison',
       'build-essential',
-      'dconf-cli',
-      'gcc-6',
       'cmake',
+      'dconf-cli',
+      'gcc',
       'libffi-dev',
       'libgdbm-dev',
-      'libgdbm5',
+      'libgdbm6',
       'libncurses5-dev',
       'libreadline6-dev',
       'libsqlite3-dev',
-      'libssl1.0-dev',
-      'nodejs-dev',
-      'node-gyp',
+      'libssl-dev',
       'libyaml-dev',
+      'node-gyp',
       'nodejs',
       'npm',
+      'patch',
+      'rustc',
+      'uuid-dev',
       'xclip',
       'zlib1g-dev',
       # workflow requirements
-      'autojump',
+      'bat',
       'dialog',
       'dos2unix',
+      'exa',
       'git',
       'gitg',
       'htop',
@@ -50,10 +56,10 @@
       'uchardet',
       'whois',
       'wkhtmltopdf',
+      'fzf',
+      'fossil',
+      'zoxide',
       'zip',
       'zsh-syntax-highlighting',
-      # Ansible plugins requirements
-      'python-pexpect',
-      'python-pip',
-      'python-psycopg2'
+      'zsh-autosuggestions'
     ]

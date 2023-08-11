@@ -1,6 +1,3 @@
 ---
+# TBD
 
-roles:
-  - base
-  - yarn
-  - dotfiles
