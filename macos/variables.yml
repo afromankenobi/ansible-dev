@@ -8,7 +8,7 @@ configure_sudoers: false
 #   # Allow users in admin group to use sudo with no password.
 #   %admin ALL=(ALL) NOPASSWD: ALL
 
-osx_script: "./osx --no-restart"
+osx_script: "./macos/osx --no-restart"
 
 mas_installed_apps:
   - { id: 1055511498, name: 'Day One' }
@@ -59,7 +59,6 @@ homebrew_installed_packages:
   - gettext
   - gifsicle
   - git
-  - gitg
   - github/gh/gh
   - gnu-sed
   - go
@@ -131,9 +130,7 @@ homebrew_cask_appdir: /Applications
 homebrew_cask_apps:
   - alt-tab
   - chromedriver
-  - docker
   - firefox
-  - google-chrome
   - handbrake
   - licecap
   - sublime-text
@@ -151,12 +148,6 @@ dockitems_persist:
   - name: "iTerm"
     path: "/Applications/iTerm.app/"
     pos: 1
-  - name: "Be Focused"
-    path: "/Applications/Be Focused Pro.app/"
-    pos: 2
-  - name: "Telegram"
-    path: "/Applications/Telegram.app/"
-    pos: 3
   - name: "Licecap"
     path: "/Applications/Licecap.app/"
-    pos: 4
+    pos: 2

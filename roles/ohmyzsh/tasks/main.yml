@@ -2,11 +2,13 @@
   become: true
   apt:
     name: zsh
+  when: ansible_os_family == "Debian"
 
 - name: Install pexpect
   become: true
   apt:
     name: python3-pexpect
+  when: ansible_os_family == "Debian"
 
 - name: Clone OhmyZsh
   git:
@@ -28,7 +30,7 @@
 
 - name: Default shell
   expect:
-    command: "chsh -s /usr/bin/zsh"
+    command: "chsh -s /bin/zsh"
     responses:
       (?i)password:
         - "{{ user_password }}"

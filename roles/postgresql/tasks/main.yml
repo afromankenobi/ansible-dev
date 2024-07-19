@@ -23,6 +23,7 @@
   pip:
     name: psycopg2
     state: present
+  when: ansible_os_family == 'Debian'
 
 - name: DB user
   postgresql_user:
