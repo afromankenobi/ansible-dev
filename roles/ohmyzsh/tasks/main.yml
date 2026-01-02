@@ -1,37 +1,36 @@
-- name: Install zsh
+---
+# roles/ohmyzsh/tasks/main.yml
+# Install Oh-My-Zsh framework
+# Note: Zsh plugins (autosuggestions, syntax-highlighting) are installed via
+# Homebrew in the dotfiles role, not as Oh-My-Zsh custom plugins
+
+- name: Install zsh (Debian only)
   become: true
   apt:
     name: zsh
   when: ansible_os_family == "Debian"
 
-- name: Install pexpect
+- name: Check if Oh-My-Zsh is already installed
+  stat:
+    path: "{{ ansible_env.HOME }}/.oh-my-zsh"
+  register: ohmyzsh_installed
+
+- name: Clone Oh-My-Zsh framework
+  git:
+    repo: https://github.com/robbyrussell/oh-my-zsh.git
+    dest: "{{ ansible_env.HOME }}/.oh-my-zsh"
+    accept_hostkey: yes
+    depth: 1
+  when: not ohmyzsh_installed.stat.exists
+
+- name: Set zsh as default shell (Debian only)
   become: true
-  apt:
-    name: python3-pexpect
+  user:
+    name: "{{ ansible_user_id }}"
+    shell: /bin/zsh
   when: ansible_os_family == "Debian"
 
-- name: Clone OhmyZsh
-  git:
-    repo: https://github.com/robbyrussell/oh-my-zsh.git 
-    dest: ~/.oh-my-zsh
-    accept_hostkey: yes
-
-- name: Clone fish like autosuggestions
-  git:
-    repo: https://github.com/zsh-users/zsh-autosuggestions
-    dest: ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
-    accept_hostkey: yes
-
-- name: Clone fish like syntax highlighting
-  git:
-    repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
-    dest: ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
-    accept_hostkey: yes
-
-- name: Default shell
-  expect:
-    command: "chsh -s /bin/zsh"
-    responses:
-      (?i)password:
-        - "{{ user_password }}"
-    creates: ".shell_is_zsh"
+# Note for macOS:
+# On macOS, zsh is the default shell since macOS Catalina (10.15).
+# If you need to change it manually: chsh -s /bin/zsh
+# Or: System Settings → Users & Groups → Advanced Options → Login Shell

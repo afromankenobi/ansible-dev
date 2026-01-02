@@ -1,26 +1,160 @@
-- name: Clone dotfiles
+---
+# roles/dotfiles/tasks/main.yml
+# This role clones and sets up dotfiles from github.com/afromankenobi/dotfiles
+
+# ============================================================================
+# Preflight Checks
+# ============================================================================
+
+- name: Run preflight checks
+  include_tasks: preflight.yml
+  tags: ['preflight', 'always']
+
+# ============================================================================
+# Clone Dotfiles
+# ============================================================================
+
+- name: Clone dotfiles repository
   git:
     repo: git@github.com:afromankenobi/dotfiles.git
-    dest: ~/dotfiles
+    dest: "{{ ansible_env.HOME }}/dotfiles"
     accept_hostkey: true
+    update: yes
 
-- name: Link vim config
+# ============================================================================
+# Install packages from Brewfile (macOS only)
+# ============================================================================
+
+- name: Install Homebrew packages from dotfiles Brewfile (macOS only)
+  block:
+    - name: Check if Brewfile.minimal exists
+      stat:
+        path: "{{ ansible_env.HOME }}/dotfiles/Brewfile.minimal"
+      register: brewfile_minimal
+
+    - name: Install packages from Brewfile.minimal
+      command: brew bundle install --file={{ ansible_env.HOME }}/dotfiles/Brewfile.minimal
+      args:
+        chdir: "{{ ansible_env.HOME }}/dotfiles"
+      when: brewfile_minimal.stat.exists
+      register: brew_bundle_result
+      changed_when: "'Installing' in brew_bundle_result.stdout"
+  when: ansible_os_family == "Darwin"
+
+# ============================================================================
+# Symlink configurations
+# ============================================================================
+
+- name: Symlink Vim configuration
   file:
-    src: "~/dotfiles/vim/{{ item }}"
-    dest: "~/.{{ item }}"
+    src: "{{ ansible_env.HOME }}/dotfiles/vim/{{ item }}"
+    dest: "{{ ansible_env.HOME }}/.{{ item }}"
     state: link
+    force: yes
   with_items:
     - vimrc
     - vimrc.bundles
 
-- name: Link tmux
+- name: Symlink Tmux configuration
   file:
-    src: "~/dotfiles/tmux/tmux.conf"
-    dest: "~/.tmux.conf"
+    src: "{{ ansible_env.HOME }}/dotfiles/tmux/tmux.conf"
+    dest: "{{ ansible_env.HOME }}/.tmux.conf"
     state: link
+    force: yes
 
-- name: Link ohmyzsh
+- name: Symlink Zsh configuration
   file:
-    src: "~/dotfiles/zshrc"
-    dest: "~/.zshrc"
+    src: "{{ ansible_env.HOME }}/dotfiles/zshrc"
+    dest: "{{ ansible_env.HOME }}/.zshrc"
     state: link
+    force: yes
+
+- name: Check if zshrc.local.example exists
+  stat:
+    path: "{{ ansible_env.HOME }}/dotfiles/zshrc.local.example"
+  register: zshrc_example
+
+- name: Create zshrc.local from example if it doesn't exist
+  copy:
+    src: "{{ ansible_env.HOME }}/dotfiles/zshrc.local.example"
+    dest: "{{ ansible_env.HOME }}/.zshrc.local"
+    force: no
+  when: zshrc_example.stat.exists
+
+# ============================================================================
+# Doom Emacs Setup (macOS only)
+# ============================================================================
+
+- name: Setup Doom Emacs (macOS only)
+  block:
+    - name: Check if Doom Emacs is already installed
+      stat:
+        path: "{{ ansible_env.HOME }}/.config/emacs/bin/doom"
+      register: doom_installed
+
+    - name: Clone Doom Emacs
+      git:
+        repo: https://github.com/doomemacs/doomemacs
+        dest: "{{ ansible_env.HOME }}/.config/emacs"
+        depth: 1
+      when: not doom_installed.stat.exists
+
+    - name: Install Doom Emacs
+      command: "{{ ansible_env.HOME }}/.config/emacs/bin/doom install --no-env --no-fonts"
+      when: not doom_installed.stat.exists
+
+    - name: Create Doom config directory
+      file:
+        path: "{{ ansible_env.HOME }}/.config/doom"
+        state: directory
+
+    - name: Remove default Doom config files if they exist (only on first install)
+      file:
+        path: "{{ ansible_env.HOME }}/.config/doom/{{ item }}"
+        state: absent
+      with_items:
+        - config.el
+        - packages.el
+      when: not doom_installed.stat.exists
+
+    - name: Symlink Doom Emacs configuration
+      file:
+        src: "{{ ansible_env.HOME }}/dotfiles/doom/{{ item }}"
+        dest: "{{ ansible_env.HOME }}/.config/doom/{{ item }}"
+        state: link
+        force: yes
+      with_items:
+        - config.org
+        - packages.org
+        - init.el
+
+    - name: Run doom sync to generate config from org files
+      command: "{{ ansible_env.HOME }}/.config/emacs/bin/doom sync"
+      register: doom_sync_result
+      changed_when: "'Synchronizing' in doom_sync_result.stdout"
+  when: ansible_os_family == "Darwin"
+
+# ============================================================================
+# Neovim (Optional - only if nvimrc.lua exists)
+# ============================================================================
+
+- name: Setup Neovim configuration (if nvimrc.lua exists)
+  block:
+    - name: Check if nvimrc.lua exists in dotfiles
+      stat:
+        path: "{{ ansible_env.HOME }}/dotfiles/vim/nvimrc.lua"
+      register: nvimrc_exists
+
+    - name: Create Neovim config directory
+      file:
+        path: "{{ ansible_env.HOME }}/.config/nvim"
+        state: directory
+      when: nvimrc_exists.stat.exists
+
+    - name: Symlink Neovim configuration
+      file:
+        src: "{{ ansible_env.HOME }}/dotfiles/vim/nvimrc.lua"
+        dest: "{{ ansible_env.HOME }}/.config/nvim/init.lua"
+        state: link
+        force: yes
+      when: nvimrc_exists.stat.exists

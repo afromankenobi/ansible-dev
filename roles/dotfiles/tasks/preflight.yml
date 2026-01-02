@@ -1,0 +1,139 @@
+---
+# Preflight checks for dotfiles role
+# These checks ensure prerequisites are met before attempting setup
+
+- name: Display system information
+  debug:
+    msg: |
+      Running preflight checks...
+      OS: {{ ansible_distribution }} {{ ansible_distribution_version }}
+      Architecture: {{ ansible_architecture }}
+      Home: {{ ansible_env.HOME }}
+
+- name: Check if Homebrew is installed (macOS only)
+  block:
+    - name: Check for Homebrew binary
+      command: brew --version
+      register: brew_check
+      failed_when: false
+      changed_when: false
+
+    - name: Fail if Homebrew not found
+      fail:
+        msg: |
+          ❌ Homebrew not found!
+
+          Please install Homebrew first:
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+          Then add it to your PATH:
+          eval "$(/opt/homebrew/bin/brew shellenv)"
+
+          For more info: https://brew.sh
+      when: brew_check.rc != 0
+
+    - name: Display Homebrew version
+      debug:
+        msg: "✅ Homebrew {{ brew_check.stdout_lines[0] }} is installed"
+      when: brew_check.rc == 0
+  when: ansible_os_family == "Darwin"
+
+- name: Check if Xcode Command Line Tools are installed (macOS only)
+  block:
+    - name: Check for xcode-select
+      command: xcode-select -p
+      register: xcode_check
+      failed_when: false
+      changed_when: false
+
+    - name: Warn if Xcode Command Line Tools not found
+      debug:
+        msg: |
+          ⚠️  Xcode Command Line Tools may not be installed.
+
+          If you encounter issues, install them with:
+          xcode-select --install
+      when: xcode_check.rc != 0
+
+    - name: Display Xcode Command Line Tools path
+      debug:
+        msg: "✅ Xcode Command Line Tools installed at {{ xcode_check.stdout }}"
+      when: xcode_check.rc == 0
+  when: ansible_os_family == "Darwin"
+
+- name: Check if git is available
+  command: git --version
+  register: git_check
+  failed_when: false
+  changed_when: false
+
+- name: Fail if git not found
+  fail:
+    msg: |
+      ❌ Git not found!
+
+      On macOS: Install Xcode Command Line Tools
+      xcode-select --install
+
+      On Debian/Ubuntu:
+      sudo apt-get install git
+  when: git_check.rc != 0
+
+- name: Display git version
+  debug:
+    msg: "✅ Git {{ git_check.stdout }} is installed"
+  when: git_check.rc == 0
+
+- name: Check SSH key for GitHub access
+  block:
+    - name: Test SSH connection to GitHub
+      command: ssh -T git@github.com
+      register: github_ssh_check
+      failed_when: false
+      changed_when: false
+      # Note: ssh -T git@github.com returns exit code 1 on success with message
+
+    - name: Warn if GitHub SSH access not configured
+      debug:
+        msg: |
+          ⚠️  GitHub SSH access not configured or key not added.
+
+          The playbook will try to clone using SSH (git@github.com).
+          If this fails, you need to:
+
+          1. Generate an SSH key (if you don't have one):
+             ssh-keygen -t ed25519 -C "your_email@example.com"
+
+          2. Add it to your GitHub account:
+             cat ~/.ssh/id_ed25519.pub
+             Then add to: https://github.com/settings/keys
+
+          3. Test connection:
+             ssh -T git@github.com
+      when:
+        - "'successfully authenticated' not in github_ssh_check.stderr"
+        - "'Hi ' not in github_ssh_check.stderr"
+
+    - name: Display GitHub SSH status
+      debug:
+        msg: "✅ GitHub SSH access is configured"
+      when:
+        - "'successfully authenticated' in github_ssh_check.stderr or 'Hi ' in github_ssh_check.stderr"
+
+- name: Check available disk space
+  block:
+    - name: Get disk usage
+      shell: df -h {{ ansible_env.HOME }} | tail -1 | awk '{print $4}'
+      register: disk_space
+      changed_when: false
+
+    - name: Display available disk space
+      debug:
+        msg: "💾 Available disk space in home directory: {{ disk_space.stdout }}"
+
+- name: All preflight checks passed
+  debug:
+    msg: |
+      ✅ All preflight checks passed!
+
+      Proceeding with dotfiles setup...
