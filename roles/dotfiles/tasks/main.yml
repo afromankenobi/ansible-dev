@@ -51,15 +51,15 @@
 
 - name: Check if zshrc.local exists
   stat:
-    path: "{{ ansible_env.HOME }}/.zshrc.local
+    path: "{{ ansible_env.HOME }}/.zshrc.local"
   register: zshrc_example
 
 - name: Create zshrc.local from example if it doesn't exist
   copy:
-    src: "{{ ansible_env.HOME }}/dotfiles/zshrc.local.example"
+    src: "{{ ansible_env.HOME }}/dotfiles/zsh/zshrc.local.example"
     dest: "{{ ansible_env.HOME }}/.zshrc.local"
     force: no
-  when: zshrc_example.stat.exists
+  when: not zshrc_example.stat.exists
 
 # ============================================================================
 # Doom Emacs Setup (macOS only)
