@@ -47,8 +47,6 @@
     - name: Include asdf role
       include_role:
         name: asdf
-      vars:
-        local_tool_versions_path: "{{ ansible_env.HOME }}/.tool-versions"
 
     - name: Include ohmyzsh role
       include_role:

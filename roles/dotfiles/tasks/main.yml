@@ -158,3 +158,21 @@
         state: link
         force: yes
       when: nvimrc_exists.stat.exists
+
+# ============================================================================
+# asdf default package configurations
+# ============================================================================
+
+- name: Symlink asdf default package configurations
+  file:
+    src: "{{ ansible_env.HOME }}/dotfiles/{{ item }}"
+    dest: "{{ ansible_env.HOME }}/{{ item }}"
+    state: link
+    force: yes
+  with_items:
+    - .default-gems
+    - .default-npm-packages
+    - .default-python-packages
+    - .default-elixir-packages
+    - .default-golang-packages
+    - .default-cargo-crates
