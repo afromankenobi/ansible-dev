@@ -7,6 +7,26 @@
         - name: Include variables from a file
           include_vars: macos/variables.yml
 
+        - name: Cache installed Homebrew packages
+          command: brew list --formula -1
+          register: brew_installed_formulas
+          changed_when: false
+          failed_when: false
+
+        - name: Cache installed Homebrew casks
+          command: brew list --cask -1
+          register: brew_installed_casks
+          changed_when: false
+          failed_when: false
+
+        - name: Filter out already-installed packages
+          set_fact:
+            homebrew_installed_packages: "{{ homebrew_installed_packages | select('string') | reject('in', brew_installed_formulas.stdout_lines) | list + homebrew_installed_packages | select('mapping') | list }}"
+            homebrew_cask_apps: "{{ homebrew_cask_apps | reject('in', brew_installed_casks.stdout_lines) | list }}"
+          when:
+            - brew_installed_formulas.rc == 0
+            - brew_installed_casks.rc == 0
+
         - name: Include macOS setup
           include_tasks: macos/tasks/sudoers.yml
           when: configure_sudoers
