@@ -20,11 +20,13 @@ mas_installed_apps:
   - { id: 1475303629, name: 'Dear Reader' }
   - { id: 1480933944, name: 'Vimari' }
   - { id: 1484348796, name: 'Endel' }
+  - { id: 1518425043, name: "Boop" }
+  - { id: 1569813296, name: "1Password for Safari" }
   - { id: 408981434, name: "iMovie" }
   - { id: 409183694, name: "Keynote" }
   - { id: 409201541, name: "Pages" }
   - { id: 409203825, name: "Numbers" }
-  - { id: 441258766, name: 'Magnet' }
+  - { id: 425424353, name: "The Unarchiver" }
   - { id: 462054704, name: 'Microsoft Word' }
   - { id: 462058435, name: 'Microsoft Excel' }
   - { id: 462062816, name: 'Microsoft PowerPoint' }
@@ -34,100 +36,249 @@ mas_installed_apps:
   - { id: 682658836, name: "GarageBand" } 
   - { id: 747648890, name: 'Telegram' }
   - { id: 775737590, name: 'iA Writer' }
+  - { id: 899247664, name: "TestFlight" }
   - { id: 961632517, name: 'Be Focused Pro: Pomodoro Timer' }
+
 mas_upgrade_all_apps: true
 
 homebrew_taps:
   - d12frosted/emacs-plus
+  - elixir-tools/tap
+  - github/gh
+  - homebrew/bundle
+  - homebrew/services
+  - pagerduty/pd_brews
+  # - wtfutil/wtfutil
 
 homebrew_installed_packages:
-  - ansible
-  - autoconf
-  - bash-completion
-  - bat
-  - bison
-  - { name: emacs-plus, install_options: "with-dbus,with-debug,with-mailutils,with-xwidgets,with-imagemagick,with-c9rgreen-sonoma-icon" }
-  - cmake
-  - cowsay
-  - git-delta
-  - dialog
-  - dos2unix
-  - doxygen
-  - fd
-  - ffmpeg
-  - findutils
-  - fossil
-  - gettext
-  - gifsicle
-  - git
-  - github/gh/gh
-  - gnu-sed
-  - go
-  - gpg
-  - graphviz
-  - haproxy
-  - htop
-  - httpie
-  - imagemagick
-  - iperf
-  - jq
-  - libevent
-  - fzf
-  - zoxide
-  - eza
-  - zsh-autosuggestions
-  - libpq
-  - libwebm
-  - lsusb
-  - mas
-  - mysql
-  - mosh
-  - nmap
-  - node
-  - nvim
-  - openssl
-  - openssl@3
-  - p7zip
-  - peco
-  - php
-  - postgresql
-  - pv
-  - asdf
-  - readline
-  - redis
-  - ripgrep
-  - rust
-  - s3cmd
-  - sqlite
-  - sqlite3
-  - ssh-copy-id
-  - starship
-  - svn
-  - the_silver_searcher
-  - tig
-  - tmux
-  - tree
-  - tree-sitter
-  - uchardet
-  - vim
-  - viu
-  - wget
-  - whois
-  - wrk
-  - yarn
-  - zip
-  - zsh-history-substring-search
-  - zsh-syntax-highlighting
+# ============================================================================
+# FORMULAS (Command-line tools)
+# ============================================================================
+
+# --- Development Tools ---
+- act                              # Run GitHub Actions locally
+- actionlint                       # GitHub Actions workflow linter
+- asdf                             # Version manager for multiple languages
+- autoconf                         # Automatic configure script builder
+- automake                         # Tool for generating Makefile.in files
+- cmake                            # Cross-platform build system
+- ctags, link: false               # Tags file generator
+- editorconfig                     # Maintain consistent coding styles
+- editorconfig-checker             # EditorConfig validator
+- git                              # Distributed version control
+- git-delta                        # Syntax-highlighting pager for git
+- git-lfs                          # Git extension for versioning large files
+- gitleaks                         # Scan git repos for secrets
+- global                           # Source code tagging system
+- lazygit                          # Terminal UI for git
+
+# --- Shell & Terminal ---
+- bash                             # Bourne-Again SHell
+- bash-completion                  # Bash completion
+- coreutils                        # GNU File, Shell, and Text utilities
+- dialog                           # Display dialog boxes from shell scripts
+- direnv                           # Load/unload environment variables
+- eza                              # Modern replacement for ls
+- fd                               # Simple, fast alternative to find
+- findutils                        # GNU find, xargs, locate
+- fzf                              # Command-line fuzzy finder
+- gawk                             # GNU awk
+- gnu-sed                          # GNU implementation of sed
+- gnu-tar                          # GNU version of tar
+- htop                             # Improved top
+- ripgrep                          # Fast search tool (grep alternative)
+- the_silver_searcher
+- starship                         # Cross-shell prompt
+- tmux                             # Terminal multiplexer
+- watch                            # Execute command periodically
+- zoxide                           # Smarter cd command
+- zsh-autosuggestions              # Fish-like autosuggestions for zsh
+- zsh-history-substring-search     # ZSH port of Fish history search
+- zsh-syntax-highlighting          # Fish-like syntax highlighting for zsh
+
+# --- Text Processing & Editors ---
+- bat                              # Cat clone with syntax highlighting
+- neovim                           # Vim-fork focused on extensibility
+- vim                              # Vi IMproved
+- dos2unix                         # Convert DOS/Windows text to Unix
+- discount                         # C implementation of Markdown
+- groff                            # GNU troff text-formatting system
+- pandoc                           # Universal document converter
+
+# --- Emacs & Language Servers ---
+- aspell                           # Spell checker (for Emacs)
+- bash-language-server             # Language server for Bash
+- editorconfig                     # EditorConfig support
+- enchant                          # Spellchecker abstraction library
+- gnutls                           # GNU TLS library (for Emacs)
+- gopls                            # Go language server
+- graphviz                         # Graph visualization software
+- hunspell                         # Spell checker (for Emacs)
+- kotlin-language-server           # Kotlin language server
+- languagetool                     # Grammar, style, and spell checker
+- libgccjit                        # JIT library for Emacs native-comp
+- libvterm                         # Terminal emulator library (for Emacs vterm)
+- libxt                            # X Toolkit library (for Emacs X support)
+- libxslt                          # XSLT C library
+- marksman                         # Markdown language server
+- mu                               # Email indexer for Emacs mu4e
+- pinentry-mac                     # Passphrase entry dialog for GPG
+- poppler                          # PDF rendering library (for Emacs pdf-tools)
+- sql-language-server              # SQL language server
+- stylelint                        # CSS linter
+- yaml-language-server             # YAML language server
+- { name: emacs-plus, install_options: "with-dbus,with-debug,with-mailutils,with-xwidgets,with-imagemagick,with-c9rgreen-sonoma-icon" }
+
+# --- Programming Languages ---
+- gcc                              # GNU compiler collection
+- gdb                              # GNU debugger
+- leiningen                        # Clojure build tool
+- openjdk                          # Java Development Kit
+- php                              # PHP scripting language
+
+# --- Database Tools ---
+- libpq                            # PostgreSQL C API library
+- mongodb-atlas-cli                # MongoDB Atlas CLI
+- mydumper                         # MySQL backup tool
+- sqlfmt                           # SQL formatter
+
+# --- Cloud & DevOps ---
+- ansible                          # Configuration management
+- argocd                           # GitOps continuous delivery
+- awscli                           # AWS command-line interface
+- docker-credential-helper         # Docker credential helper
+- docker-credential-helper-ecr     # ECR credential helper
+- doctl                            # DigitalOcean CLI
+- gh                               # GitHub CLI
+- gh-ost                           # GitHub's online schema migration
+- helm                             # Kubernetes package manager
+- kubernetes-cli                   # Kubernetes command-line
+- s3cmd                            # S3 command-line tool
+- saml2aws                         # CLI for SAML-based AWS login
+- tfenv                            # Terraform version manager
+- pagerduty/pd_brews/aws-okta      # PagerDuty AWS Okta tool
+- pagerduty/pd_brews/pd-aws        # PagerDuty AWS tool
+- pagerduty/pd_brews/pd-kubectx    # PagerDuty kubectl context switcher
+- pagerduty/pd_brews/pd-ssh        # PagerDuty SSH tool
+
+# --- Networking & Security ---
+- autossh                          # Automatically restart SSH sessions
+- bettercap                        # Network attack and monitoring
+- curl                             # Transfer data with URLs
+- dnsmasq                          # DNS forwarder and DHCP server
+- gnupg                            # GNU Privacy Guard
+- hcxtools                         # Portable solution for capturing wlan traffic
+- httpie                           # User-friendly HTTP client
+- iperf                            # Network bandwidth measurement
+- lsusb                            # List USB devices
+- mosh                             # Remote terminal with roaming
+- nmap                             # Network exploration tool
+- ssh-copy-id                      # Copy SSH public key
+- sshuttle                         # VPN over SSH
+- telnet                           # User interface to TELNET protocol
+- wget                             # Internet file retriever
+- whois                            # Lookup tool for domain names
+
+# --- Security & Code Analysis ---
+- semgrep                          # Static analysis tool
+- shellcheck                       # Shell script analysis tool
+
+# --- Media & Image Processing ---
+- cairo                            # 2D graphics library
+- ffmpeg                           # Video/audio processing
+- ffmpegthumbnailer                # Video thumbnail generator
+- gifsicle                         # GIF image manipulation
+- ghostscript                      # PostScript/PDF interpreter
+- imagemagick                      # Image manipulation
+- jpeg-xl                          # JPEG XL image codec
+- harfbuzz                         # Text shaping library
+- librsvg                          # SVG rendering library
+- libwebm                          # WebM video format library
+- media-info                       # Media file information tool
+- sox                              # Sound processing
+- tesseract                        # OCR engine
+- viu                              # Terminal image viewer
+- yt-dlp                           # YouTube downloader
+
+# --- Documentation & Publishing ---
+- doxygen                          # Documentation generator
+- fop                              # XSL-FO print formatter
+- gnuplot                          # Graph plotting
+- hugo                             # Static site generator
+- lynx                             # Text-based web browser
+- ocrmypdf                         # Add OCR layer to PDFs
+- weasyprint                       # PDF generator
+
+# --- Utilities ---
+- clang-format                     # C/C++/Obj-C formatter
+- cowsay                           # Configurable talking cow
+- jq                               # JSON processor
+- mas                              # Mac App Store CLI
+- p7zip                            # 7-Zip file archiver
+- parallel                         # Shell tool for executing jobs in parallel
+- pipx                             # Install Python applications
+- pngpaste                         # Paste PNG into files
+- pv                               # Pipe viewer
+- unzip                            # Extraction utility
+- wmctrl                           # X window manipulation
+- wordnet                          # Lexical database for English
+- wrk                              # HTTP benchmarking tool
+- wtfutil                          # Personal information dashboard
+- zenith                           # System monitoring
+- zip                              # Compression utility
+
+# --- Build Tools ---
+- bazel                            # Build and test software
+- bison                            # Parser generator
+- pkgconf                          # Package compiler and linker metadata
+- libtool                          # Generic library support script
+
+# --- Libraries ---
+- gmp                              # GNU multiple precision arithmetic
+- icu4c@76                         # International Components for Unicode
+- libyaml                          # YAML parser and emitter
+- openssl@1.1                      # OpenSSL 1.1 (legacy)
+- openssl@3                        # OpenSSL 3
+- pcre2                            # Regular expression library
+- portaudio                        # Cross-platform audio I/O
+- pyqt                             # Python bindings for Qt
+- qt                               # Cross-platform framework
+- re2                              # Regular expression library
+- unixodbc                         # ODBC interface library
+- wxwidgets                        # Cross-platform C++ GUI toolkit
+- xz                               # General-purpose data compression
+
+# --- Miscellaneous ---
+- dockutil                         # Manage macOS dock items
+- fossil                           # Distributed version control
+- haproxy                          # Reliable, high-performance TCP/HTTP load balancer
+- kcat                             # Kafka producer/consumer
+- livekit                          # WebRTC infrastructure
+- the_silver_searcher              # Code searching tool (ag)
+- uchardet                         # Encoding detector
 
 homebrew_cask_appdir: /Applications
 homebrew_cask_apps:
   - alacritty
   - alt-tab
+  - android-commandlinetools
+  - basictex
   - chromedriver
   - docker
+  - font-fira-code-nerd-font
+  - font-hack-nerd-font
+  - font-inconsolata-nerd-font
+  - font-meslo-lg-nerd-font
+  - font-roboto-mono-nerd-font
+  - font-sauce-code-pro-nerd-font
+  - font-source-code-pro
+  - font-symbols-only-nerd-font
+  - font-ubuntu-nerd-font
   - handbrake
+  - imcp
   - licecap
   - postman
+  - sublime-text
 
 configure_dock: true
 dockitems_remove:
