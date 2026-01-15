@@ -1,7 +1,7 @@
 ---
 # Main orchestration for asdf role
-# Handles installation and shell configuration only
-# Plugin installation, versions, and default packages are managed via dotfiles
+# Handles installation, shell configuration, and version installation
+# Configuration files (.tool-versions, default-packages) are managed via dotfiles
 
 - name: Install asdf
   include_tasks: install.yml
@@ -10,3 +10,7 @@
 - name: Configure shell initialization
   include_tasks: configure-shell.yml
   tags: ['asdf', 'asdf:shell']
+
+- name: Install language versions from .tool-versions
+  include_tasks: versions.yml
+  tags: ['asdf', 'asdf:versions']

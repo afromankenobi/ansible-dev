@@ -1,0 +1,24 @@
+---
+# Install language versions from .tool-versions file
+# Assumes dotfiles have been cloned and .tool-versions is symlinked
+
+- name: Check if .tool-versions file exists
+  stat:
+    path: "{{ ansible_env.HOME }}/.tool-versions"
+  register: tool_versions_file
+
+- name: Install all language versions from .tool-versions
+  command: asdf install
+  args:
+    chdir: "{{ ansible_env.HOME }}"
+  when: tool_versions_file.stat.exists
+  register: asdf_install_result
+  changed_when: "'Installing' in asdf_install_result.stdout or 'Installing' in asdf_install_result.stderr"
+  failed_when: false
+
+- name: Display asdf install output
+  debug:
+    msg: "{{ asdf_install_result.stdout_lines | default([]) }}"
+  when:
+    - tool_versions_file.stat.exists
+    - asdf_install_result is defined

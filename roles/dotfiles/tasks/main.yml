@@ -140,12 +140,19 @@
       when: nvimrc_exists.stat.exists
 
 # ============================================================================
-# asdf default package configurations
+# asdf configuration files
 # ============================================================================
+
+- name: Symlink asdf .tool-versions file
+  file:
+    src: "{{ ansible_env.HOME }}/dotfiles/asdf/tool-versions"
+    dest: "{{ ansible_env.HOME }}/.tool-versions"
+    state: link
+    force: yes
 
 - name: Symlink asdf default package configurations
   file:
-    src: "{{ ansible_env.HOME }}/dotfiles/{{ item }}"
+    src: "{{ ansible_env.HOME }}/dotfiles/asdf/{{ item }}"
     dest: "{{ ansible_env.HOME }}/.{{ item }}"
     state: link
     force: yes
