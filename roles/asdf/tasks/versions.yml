@@ -5,16 +5,30 @@
   set_fact:
     use_local_tool_versions: "{{ local_tool_versions_path | length > 0 }}"
 
+- name: Check if local .tool-versions file exists on controller
+  stat:
+    path: "{{ local_tool_versions_path }}"
+  register: local_tool_versions_stat
+  delegate_to: localhost
+  when: use_local_tool_versions
+
+- name: Determine if we should copy or template
+  set_fact:
+    should_copy_tool_versions: "{{ use_local_tool_versions and local_tool_versions_stat.stat.exists | default(false) }}"
+
 - name: Copy existing .tool-versions file
   copy:
     src: "{{ local_tool_versions_path }}"
     dest: "{{ ansible_env.HOME }}/.tool-versions"
     mode: '0644'
-  when: use_local_tool_versions
+  when: should_copy_tool_versions
 
-# TODO: Template generation from variables if local_tool_versions_path not provided
-# This would require defining version variables in defaults/main.yml
-# For now, we assume the user provides their .tool-versions file
+- name: Template .tool-versions from variables
+  template:
+    src: tool-versions.j2
+    dest: "{{ ansible_env.HOME }}/.tool-versions"
+    mode: '0644'
+  when: not should_copy_tool_versions
 
 - name: Check if .tool-versions exists
   stat:

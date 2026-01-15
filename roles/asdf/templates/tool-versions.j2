@@ -1,0 +1,44 @@
+# Managed by Ansible - asdf role
+# This file specifies which versions of each language to use
+{% if asdf_versions.ruby %}
+ruby {{ asdf_versions.ruby }}
+{% endif %}
+{% if asdf_versions.nodejs %}
+nodejs {{ asdf_versions.nodejs }}
+{% endif %}
+{% if asdf_versions.erlang %}
+erlang {{ asdf_versions.erlang }}
+{% endif %}
+{% if asdf_versions.elixir %}
+elixir {{ asdf_versions.elixir }}
+{% endif %}
+{% if asdf_versions.java %}
+java {{ asdf_versions.java }}
+{% endif %}
+{% if asdf_versions.python %}
+python {{ asdf_versions.python }}
+{% endif %}
+{% if asdf_versions.golang %}
+golang {{ asdf_versions.golang }}
+{% endif %}
+{% if asdf_versions.rust %}
+rust {{ asdf_versions.rust }}
+{% endif %}
+{% if asdf_versions.r %}
+r {{ asdf_versions.r }}
+{% endif %}
+{% if asdf_versions.zig %}
+zig {{ asdf_versions.zig }}
+{% endif %}
+{% if asdf_versions.dotnet %}
+dotnet {{ asdf_versions.dotnet }}
+{% endif %}
+{% if asdf_versions.istioctl %}
+istioctl {{ asdf_versions.istioctl }}
+{% endif %}
+{% if asdf_versions.maven %}
+maven {{ asdf_versions.maven }}
+{% endif %}
+{% if asdf_versions.gradle %}
+gradle {{ asdf_versions.gradle }}
+{% endif %}
