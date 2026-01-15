@@ -18,16 +18,16 @@
 
 - name: Global conf node pt1
   file:
-    path: ~/.npm-global
+    path: "{{ ansible_env.HOME }}/.npm-global"
     state: directory
 
 - name: Config node to install global
-  shell: npm config set prefix '~/.npm-global'
+  shell: npm config set prefix '{{ ansible_env.HOME }}/.npm-global'
 
 - name: add folder to path
   lineinfile:
-    dest: ~/.bashrc
+    dest: "{{ ansible_env.HOME }}/.bashrc"
     state: present
     create: true
-    regexp: '^export PATH=~/.npm-global'
-    line: 'export PATH=~/.npm-global/bin:$PATH'
+    regexp: '^export PATH={{ ansible_env.HOME }}/.npm-global'
+    line: 'export PATH={{ ansible_env.HOME }}/.npm-global/bin:$PATH'
