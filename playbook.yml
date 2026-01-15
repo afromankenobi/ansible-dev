@@ -2,7 +2,8 @@
 - hosts: all
   name: Provision dev server
   tasks:
-    - block:
+    - name: "Install mac things"
+      block:
         - name: Include variables from a file
           include_vars: macos/variables.yml
 
@@ -22,26 +23,30 @@
           loop:
             - geerlingguy.mac.homebrew
             - geerlingguy.mac.mas
-      when: ansible_os_family == "Darwin"
+      when: ansible_facts["os_family"] == "Darwin"
 
     - name: Include Debian setup
       include_tasks: debian/setup-debian.yml
-      when: ansible_os_family == "Debian"
+      when: ansible_facts["os_family"] == "Debian"
 
     - name: Include rust role
       include_role:
         name: rust
-      when: ansible_os_family == "Debian"
+      when: ansible_facts["os_family"] == "Debian"
 
     - name: Include base role
       include_role:
         name: debian/roles/base
-      when: ansible_os_family == "Debian"
+      when: ansible_facts["os_family"] == "Debian"
 
     - name: Include yarn role
       include_role:
         name: roles/yarn
-      when: ansible_os_family == "Debian"
+      when: ansible_facts["os_family"] == "Debian"
+
+    - name: Include dotfiles role
+      include_role:
+        name: dotfiles
 
     - name: Include asdf role
       include_role:
@@ -54,7 +59,3 @@
     - name: Include neovim role
       include_role:
         name: neovim
-
-    - name: Include dotfiles role
-      include_role:
-        name: dotfiles

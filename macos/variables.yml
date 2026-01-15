@@ -15,11 +15,8 @@ mas_installed_apps:
   - { id: 1087284172, name: 'Focus Matrix : Task Manager' }
   - { id: 1352778147, name: 'Bitwarden' }
   - { id: 1402042596, name: 'AdBlock' }
-  - { id: 1458969831, name: JSONPeep }
-  - { id: 1462114288, name: 'Grammarly for Safari' }
-  - { id: 1475303629, name: 'Dear Reader' }
-  - { id: 1480933944, name: 'Vimari' }
-  - { id: 1484348796, name: 'Endel' }
+  - { id: 1458969831, name: 'JSONPeep' }
+  - { id: 1346247457, name: 'Endel' }
   - { id: 1518425043, name: "Boop" }
   - { id: 1569813296, name: "1Password for Safari" }
   - { id: 408981434, name: "iMovie" }
@@ -32,7 +29,6 @@ mas_installed_apps:
   - { id: 462062816, name: 'Microsoft PowerPoint' }
   - { id: 497799835, name: 'Xcode' }
   - { id: 595191960, name: 'CopyClip' }
-  - { id: 668208984, name: 'GIPHY CAPTURE' }
   - { id: 682658836, name: "GarageBand" } 
   - { id: 747648890, name: 'Telegram' }
   - { id: 775737590, name: 'iA Writer' }
@@ -45,7 +41,7 @@ homebrew_taps:
   - d12frosted/emacs-plus
   - elixir-tools/tap
   - github/gh
-  - pagerduty/pd_brews
+  # - pagerduty/pd_brews
   # - wtfutil/wtfutil
 
 homebrew_installed_packages:
@@ -60,7 +56,6 @@ homebrew_installed_packages:
 - autoconf                         # Automatic configure script builder
 - automake                         # Tool for generating Makefile.in files
 - cmake                            # Cross-platform build system
-- ctags, link: false               # Tags file generator
 - editorconfig                     # Maintain consistent coding styles
 - editorconfig-checker             # EditorConfig validator
 - git                              # Distributed version control
@@ -69,6 +64,7 @@ homebrew_installed_packages:
 - gitleaks                         # Scan git repos for secrets
 - global                           # Source code tagging system
 - lazygit                          # Terminal UI for git
+- universal-ctags
 
 # --- Shell & Terminal ---
 - bash                             # Bourne-Again SHell
@@ -154,10 +150,10 @@ homebrew_installed_packages:
 - s3cmd                            # S3 command-line tool
 - saml2aws                         # CLI for SAML-based AWS login
 - tfenv                            # Terraform version manager
-- pagerduty/pd_brews/aws-okta      # PagerDuty AWS Okta tool
-- pagerduty/pd_brews/pd-aws        # PagerDuty AWS tool
-- pagerduty/pd_brews/pd-kubectx    # PagerDuty kubectl context switcher
-- pagerduty/pd_brews/pd-ssh        # PagerDuty SSH tool
+# - pagerduty/pd_brews/aws-okta      # PagerDuty AWS Okta tool
+# - pagerduty/pd_brews/pd-aws        # PagerDuty AWS tool
+# - pagerduty/pd_brews/pd-kubectx    # PagerDuty kubectl context switcher
+# - pagerduty/pd_brews/pd-ssh        # PagerDuty SSH tool
 
 # --- Networking & Security ---
 - autossh                          # Automatically restart SSH sessions
@@ -259,8 +255,8 @@ homebrew_cask_appdir: /Applications
 homebrew_cask_apps:
   - alacritty
   - alt-tab
-  - android-commandlinetools
-  - basictex
+  # - android-commandlinetools
+  # - basictex
   - chromedriver
   - docker
   - font-fira-code-nerd-font
@@ -273,7 +269,7 @@ homebrew_cask_apps:
   - font-symbols-only-nerd-font
   - font-ubuntu-nerd-font
   - handbrake
-  - imcp
+  # - imcp
   - licecap
   - postman
   - sublime-text

@@ -22,26 +22,6 @@
     update: yes
 
 # ============================================================================
-# Install packages from Brewfile (macOS only)
-# ============================================================================
-
-- name: Install Homebrew packages from dotfiles Brewfile (macOS only)
-  block:
-    - name: Check if Brewfile.minimal exists
-      stat:
-        path: "{{ ansible_env.HOME }}/dotfiles/Brewfile.minimal"
-      register: brewfile_minimal
-
-    - name: Install packages from Brewfile.minimal
-      command: brew bundle install --file={{ ansible_env.HOME }}/dotfiles/Brewfile.minimal
-      args:
-        chdir: "{{ ansible_env.HOME }}/dotfiles"
-      when: brewfile_minimal.stat.exists
-      register: brew_bundle_result
-      changed_when: "'Installing' in brew_bundle_result.stdout"
-  when: ansible_os_family == "Darwin"
-
-# ============================================================================
 # Symlink configurations
 # ============================================================================
 
@@ -64,14 +44,14 @@
 
 - name: Symlink Zsh configuration
   file:
-    src: "{{ ansible_env.HOME }}/dotfiles/zshrc"
+    src: "{{ ansible_env.HOME }}/dotfiles/zsh/zshrc"
     dest: "{{ ansible_env.HOME }}/.zshrc"
     state: link
     force: yes
 
-- name: Check if zshrc.local.example exists
+- name: Check if zshrc.local exists
   stat:
-    path: "{{ ansible_env.HOME }}/dotfiles/zshrc.local.example"
+    path: "{{ ansible_env.HOME }}/.zshrc.local
   register: zshrc_example
 
 - name: Create zshrc.local from example if it doesn't exist
@@ -166,13 +146,13 @@
 - name: Symlink asdf default package configurations
   file:
     src: "{{ ansible_env.HOME }}/dotfiles/{{ item }}"
-    dest: "{{ ansible_env.HOME }}/{{ item }}"
+    dest: "{{ ansible_env.HOME }}/.{{ item }}"
     state: link
     force: yes
   with_items:
-    - .default-gems
-    - .default-npm-packages
-    - .default-python-packages
-    - .default-elixir-packages
-    - .default-golang-packages
-    - .default-cargo-crates
+    - default-gems
+    - default-npm-packages
+    - default-python-packages
+    - default-elixir-packages
+    - default-golang-packages
+    - default-cargo-crates
