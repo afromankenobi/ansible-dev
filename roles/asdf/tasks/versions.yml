@@ -1,0 +1,45 @@
+---
+# Install language versions from .tool-versions
+
+- name: Check if local .tool-versions path is provided
+  set_fact:
+    use_local_tool_versions: "{{ local_tool_versions_path | length > 0 }}"
+
+- name: Copy existing .tool-versions file
+  copy:
+    src: "{{ local_tool_versions_path }}"
+    dest: "{{ ansible_env.HOME }}/.tool-versions"
+    mode: '0644'
+  when: use_local_tool_versions
+
+# TODO: Template generation from variables if local_tool_versions_path not provided
+# This would require defining version variables in defaults/main.yml
+# For now, we assume the user provides their .tool-versions file
+
+- name: Check if .tool-versions exists
+  stat:
+    path: "{{ ansible_env.HOME }}/.tool-versions"
+  register: tool_versions_stat
+
+- name: Install all language versions from .tool-versions
+  shell: |
+    . {{ asdf_source_path }}
+    asdf install
+  args:
+    executable: /bin/bash
+    chdir: "{{ ansible_env.HOME }}"
+  environment:
+    HOME: "{{ ansible_env.HOME }}"
+  when: tool_versions_stat.stat.exists
+  register: asdf_install_result
+  changed_when: "'is already installed' not in asdf_install_result.stdout"
+
+- name: Reshim all plugins
+  shell: |
+    . {{ asdf_source_path }}
+    asdf reshim
+  args:
+    executable: /bin/bash
+  environment:
+    HOME: "{{ ansible_env.HOME }}"
+  when: tool_versions_stat.stat.exists

@@ -1,0 +1,12 @@
+# Rust default crates - installed automatically by asdf when installing Rust versions
+# Base crates (always installed)
+{% for crate in default_rust_base %}
+{{ crate }}
+{% endfor %}
+
+# Optional crates (from playbook variables)
+{% if default_rust_optional is defined %}
+{% for crate in default_rust_optional %}
+{{ crate }}
+{% endfor %}
+{% endif %}

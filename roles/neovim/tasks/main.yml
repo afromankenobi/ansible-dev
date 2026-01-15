@@ -7,23 +7,29 @@
   command: npm install -g neovim
 
 - name: Add Ruby support
-  shell: '. ~/.rbenv.sh && gem install neovim'
+  shell: 'gem install neovim'
+  environment:
+    PATH: "{{ ansible_env.HOME }}/.asdf/shims:{{ ansible_env.PATH }}"
 
 - name: Create config folder
-  file: path=~/.config/ state=directory
+  file:
+    path: "{{ ansible_env.HOME }}/.config/"
+    state: directory
 
 - name: Create vim config folder
-  file: path=~/.vim state=directory
+  file:
+    path: "{{ ansible_env.HOME }}/.vim"
+    state: directory
 
 - name: link .vim to neovim folder
   file:
-    src: ~/.vim
-    dest: ~/.config/nvim
+    src: "{{ ansible_env.HOME }}/.vim"
+    dest: "{{ ansible_env.HOME }}/.config/nvim"
     state: link
 
 - name: link .vimrc to neovim file
   file:
-    src: ~/.vimrc
-    dest: ~/.config/nvim/init.vim
+    src: "{{ ansible_env.HOME }}/.vimrc"
+    dest: "{{ ansible_env.HOME }}/.config/nvim/init.vim"
     state: link
     force: yes

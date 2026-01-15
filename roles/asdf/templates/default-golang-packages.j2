@@ -1,0 +1,12 @@
+# Go default packages - installed automatically by asdf when installing Go versions
+# Base packages (always installed)
+{% for pkg in default_go_base %}
+{{ pkg }}
+{% endfor %}
+
+# Optional packages (from playbook variables)
+{% if default_go_optional is defined %}
+{% for pkg in default_go_optional %}
+{{ pkg }}
+{% endfor %}
+{% endif %}

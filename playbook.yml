@@ -44,13 +44,11 @@
         name: roles/yarn
       when: ansible_os_family == "Debian"
 
-    - name: Include nvm role
+    - name: Include asdf role
       include_role:
-        name: nvm
-
-    - name: Include rbenv role
-      include_role:
-        name: rbenv
+        name: asdf
+      vars:
+        local_tool_versions_path: "{{ ansible_env.HOME }}/.tool-versions"
 
     - name: Include ohmyzsh role
       include_role:

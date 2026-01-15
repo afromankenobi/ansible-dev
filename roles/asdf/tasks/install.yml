@@ -1,0 +1,32 @@
+---
+# Install asdf via package manager
+
+- name: Check if asdf is already installed
+  command: which asdf
+  register: asdf_check
+  failed_when: false
+  changed_when: false
+
+- name: Install asdf (macOS)
+  community.general.homebrew:
+    name: asdf
+    state: present
+  when:
+    - ansible_os_family == "Darwin"
+    - asdf_check.rc != 0
+
+- name: Install asdf (Debian)
+  apt:
+    name: asdf
+    state: present
+    update_cache: yes
+  become: true
+  when:
+    - ansible_os_family == "Debian"
+    - asdf_check.rc != 0
+
+- name: Verify asdf installation
+  command: which asdf
+  register: asdf_verify
+  changed_when: false
+  failed_when: asdf_verify.rc != 0

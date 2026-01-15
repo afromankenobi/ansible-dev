@@ -1,5 +1,5 @@
 ---
-downloads: ~/Downloads/ansible
+downloads: "{{ ansible_env.HOME }}/Downloads/ansible"
 
 configure_osx: true
 configure_sudoers: false
@@ -85,7 +85,6 @@ homebrew_installed_packages:
   - nmap
   - node
   - nvim
-  - nvm
   - openssl
   - openssl@3
   - p7zip
@@ -93,7 +92,7 @@ homebrew_installed_packages:
   - php
   - postgresql
   - pv
-  - rbenv
+  - asdf
   - readline
   - redis
   - ripgrep

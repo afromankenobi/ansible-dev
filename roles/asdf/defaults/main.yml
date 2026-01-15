@@ -1,0 +1,33 @@
+---
+# asdf role default variables
+
+# List of asdf plugins to install
+asdf_plugins:
+  - ruby
+  - nodejs
+  - erlang
+  - elixir
+  - java
+  - python
+  - r
+  - zig
+  - dotnet
+  - istioctl
+  - maven
+  - gradle
+  - golang
+  - rust
+
+# Optional: Path to existing .tool-versions file to copy
+# If undefined, will template .tool-versions from variables
+# Example: local_tool_versions_path: "{{ ansible_env.HOME }}/.tool-versions"
+local_tool_versions_path: ""
+
+# Optional package lists can be defined in playbooks to supplement base packages
+# Example:
+# default_gems_optional:
+#   - rails
+#   - pry
+# default_npm_optional:
+#   - webpack
+#   - jest
