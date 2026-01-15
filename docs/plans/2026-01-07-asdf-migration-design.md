@@ -106,85 +106,74 @@ This approach provides:
 
 ## Default Packages
 
-### Package Sources & Installation
+### Package Management via Dotfiles
 
-Each language has its own default package file that asdf reads automatically:
+Each language has its own default package file that asdf reads automatically. These files are managed in the dotfiles repository and symlinked by the dotfiles role:
 
-| Language | File | Package Manager | Auto-installed by asdf |
-|----------|------|----------------|----------------------|
-| Ruby | `~/.default-gems` | gem | Yes |
-| Node.js | `~/.default-npm-packages` | npm | Yes |
-| Python | `~/.default-python-packages` | pip | Yes |
-| Elixir | `~/.default-elixir-packages` | mix | Yes |
-| Go | `~/.default-golang-packages` | go install | Yes |
-| Rust | `~/.default-cargo-crates` | cargo | Yes |
+| Language | Dotfiles Source | Symlink Target | Package Manager |
+|----------|----------------|----------------|-----------------|
+| Ruby | `dotfiles/asdf/default-gems` | `~/.default-gems` | gem |
+| Node.js | `dotfiles/asdf/default-npm-packages` | `~/.default-npm-packages` | npm |
+| Python | `dotfiles/asdf/default-python-packages` | `~/.default-python-packages` | pip |
+| Elixir | `dotfiles/asdf/default-elixir-packages` | `~/.default-elixir-packages` | mix |
+| Go | `dotfiles/asdf/default-golang-packages` | `~/.default-golang-packages` | go install |
+| Rust | `dotfiles/asdf/default-cargo-crates` | `~/.default-cargo-crates` | cargo |
 
-### Template Structure
+### Package Installation
 
-All templates follow the same pattern:
+When `asdf install <language> <version>` runs (either manually or via `asdf install`), asdf automatically:
+1. Installs the language version
+2. Reads the corresponding `~/.default-*` file
+3. Installs all listed packages for that language version
 
-```jinja
-# Base packages (always installed)
-{% for pkg in default_<lang>_base %}
-{{ pkg }}
-{% endfor %}
+### Example Package Files
 
-# Optional packages (from playbook variables)
-{% if default_<lang>_optional is defined %}
-{% for pkg in default_<lang>_optional %}
-{{ pkg }}
-{% endfor %}
-{% endif %}
+Package files contain one package per line:
+
+```
+# dotfiles/asdf/default-gems
+solargraph
+rubocop
+ruby-lsp
 ```
 
-This allows:
-- **Base defaults**: Standard packages everyone gets
-- **Optional additions**: Playbook-specific extras
+```
+# dotfiles/asdf/default-npm-packages
+typescript
+typescript-language-server
+eslint
+prettier
+```
 
-### Base Package Lists
-
-Focus on LSP servers, linters, and formatters:
-
-**Ruby (gem):**
-- solargraph (Ruby LSP)
-- rubocop (Linter/formatter)
-- ruby-lsp (Alternative LSP)
-
-**Node.js (npm):**
-- typescript
-- typescript-language-server
-- vscode-langservers-extracted (HTML/CSS/JSON LSPs)
-- eslint
-- prettier
-
-**Python (pip):**
-- python-lsp-server
-- pylsp-mypy (Type checking)
-- python-lsp-black (Formatter)
-- pylsp-rope (Refactoring)
-- ruff (Linter)
-
-**Elixir (asdf built-in):**
-- elixir_ls (Elixir LSP)
-
-**Go (go install):**
-- golang.org/x/tools/gopls@latest
-- github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-- mvdan.cc/gofumpt@latest
-
-**Rust (cargo):**
-- rust-analyzer
-- clippy (may be built-in)
-- rustfmt (may be built-in)
-
-**Java:**
-- Commented out - most Java LSPs install via editor plugins, not Maven
+To modify packages:
+1. Edit the file in the dotfiles repository
+2. Commit and push changes
+3. Re-run the Ansible playbook (dotfiles will be updated, but existing versions won't reinstall)
+4. For existing versions, manually run: `asdf reshim <language>` or reinstall the version
 
 ## Task Orchestration
 
-Main task flow with tags for selective execution:
+### Playbook Execution Order
 
 ```yaml
+# 1. Dotfiles role runs first
+- name: Include dotfiles role
+  include_role:
+    name: dotfiles
+  # Clones dotfiles repo and symlinks:
+  # - dotfiles/asdf/tool-versions → ~/.tool-versions
+  # - dotfiles/asdf/default-* → ~/.default-*
+
+# 2. asdf role runs after dotfiles
+- name: Include asdf role
+  include_role:
+    name: asdf
+```
+
+### asdf Role Task Flow
+
+```yaml
+# roles/asdf/tasks/main.yml
 - name: Install asdf
   include_tasks: install.yml
   tags: ['asdf', 'asdf:install']
@@ -193,18 +182,33 @@ Main task flow with tags for selective execution:
   include_tasks: configure-shell.yml
   tags: ['asdf', 'asdf:shell']
 
-- name: Install asdf plugins
-  include_tasks: plugins.yml
-  tags: ['asdf', 'asdf:plugins']
-
-- name: Install language versions
+- name: Install language versions from .tool-versions
   include_tasks: versions.yml
   tags: ['asdf', 'asdf:versions']
-
-- name: Deploy default package configurations
-  include_tasks: default-packages.yml
-  tags: ['asdf', 'asdf:packages']
 ```
+
+### versions.yml Implementation
+
+```yaml
+- name: Check if .tool-versions file exists
+  stat:
+    path: "{{ ansible_env.HOME }}/.tool-versions"
+  register: tool_versions_file
+
+- name: Install all language versions from .tool-versions
+  command: asdf install
+  args:
+    chdir: "{{ ansible_env.HOME }}"
+  when: tool_versions_file.stat.exists
+  register: asdf_install_result
+  changed_when: "'Installing' in asdf_install_result.stdout or 'Installing' in asdf_install_result.stderr"
+  failed_when: false
+```
+
+The `versions.yml` task:
+- Only runs if `.tool-versions` exists (meaning dotfiles were cloned)
+- Runs `asdf install` from the home directory
+- asdf automatically installs plugins, versions, and default packages
 
 ## Migration & Cleanup
 
@@ -228,10 +232,9 @@ Replace with asdf role:
     ruby_versions: ["3.2.0"]
     ruby_default: "3.2.0"
 
-# New
-- role: asdf
-  vars:
-    local_tool_versions_path: /Users/jvargas/.tool-versions
+# New - no variables needed!
+- role: dotfiles  # Must run before asdf
+- role: asdf      # Reads config from dotfiles
 ```
 
 ### Migration Safety
@@ -243,60 +246,57 @@ Replace with asdf role:
 
 ## Variables
 
-### defaults/main.yml
+### No Variables Required
 
-```yaml
-asdf_plugins:
-  - ruby
-  - nodejs
-  - erlang
-  - elixir
-  - java
-  - python
-  - R
-  - zig
-  - dotnet
-  - istioctl
-  - maven
-  - gradle
-  - golang
-  - rust
+The asdf role requires no variables. All configuration is managed in the dotfiles repository:
 
-# Optional: Path to existing .tool-versions
-# local_tool_versions_path: /Users/jvargas/.tool-versions
-```
+- **Language versions**: Defined in `dotfiles/asdf/tool-versions`
+- **Default packages**: Defined in `dotfiles/asdf/default-*` files
+- **Plugins**: Automatically detected and installed by asdf based on `.tool-versions`
 
-### vars/main.yml
+### Future Extensions
 
-Contains all `default_<lang>_base` lists (see Base Package Lists section above).
+If needed, the `roles/asdf/defaults/main.yml` file can be used for:
+- Conditional behavior flags
+- Platform-specific overrides
+- Optional feature toggles
 
-### Optional Playbook Variables
-
-```yaml
-# Add extras per playbook
-default_gems_optional:
-  - rails
-  - pry
-
-default_npm_optional:
-  - webpack
-  - jest
-```
+Currently, it remains empty as the implementation requires no configuration.
 
 ## Benefits
 
-✅ Single tool for all language version management
-✅ Consistent approach across Ruby, Node, Python, Go, Rust, etc.
-✅ Automatic default package installation
-✅ LSP and linting tools included by default
-✅ Easy to extend (just add plugin + version)
-✅ Idempotent and safe to re-run
-✅ Platform-aware (macOS and Debian)
-✅ Flexible (base + optional packages)
+✅ **Single tool**: All language version management through asdf
+✅ **Consistent approach**: Same workflow for Ruby, Node, Python, Go, Rust, etc.
+✅ **No duplication**: Configuration lives in dotfiles, not Ansible variables
+✅ **Single source of truth**: Dotfiles repository is the authoritative config source
+✅ **Version controlled**: All asdf configuration tracked in git
+✅ **Automatic installation**: `asdf install` handles plugins, versions, and packages
+✅ **Idempotent**: Safe to re-run playbook multiple times
+✅ **Platform-aware**: Works on macOS and Debian
+✅ **Simple**: Minimal Ansible code, maximum functionality
+✅ **Easy updates**: Edit dotfiles and re-run playbook
 
-## Post-Implementation
+## Implementation Status
 
-- Update main playbook to use asdf role
-- Update README with asdf usage
-- Add multiple Ruby versions to `.tool-versions` (3.4, 3.3, 3.2)
-- Test on clean system before deploying widely
+### Completed (2026-01-15)
+
+✅ Created asdf role with:
+  - `install.yml` - Installs asdf via Homebrew (macOS) or apt (Debian)
+  - `configure-shell.yml` - Configures zsh/bash integration
+  - `versions.yml` - Runs `asdf install` to install versions from `.tool-versions`
+
+✅ Updated dotfiles role to:
+  - Symlink `dotfiles/asdf/tool-versions` → `~/.tool-versions`
+  - Symlink `dotfiles/asdf/default-*` → `~/.default-*`
+
+✅ Updated playbook execution order:
+  - Dotfiles role runs first (clones and symlinks configuration)
+  - asdf role runs second (installs asdf and runs `asdf install`)
+
+### Remaining Tasks
+
+- [ ] Test on clean system
+- [ ] Update README with asdf usage documentation
+- [ ] Verify all languages install correctly
+- [ ] Remove old rbenv/nvm roles (if they exist)
+- [ ] Update any remaining playbook references to rbenv/nvm
