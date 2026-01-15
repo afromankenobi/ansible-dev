@@ -1,11 +1,12 @@
 # asdf Migration Design
 
 **Date:** 2026-01-07
-**Status:** Approved
+**Status:** Implemented
+**Updated:** 2026-01-15
 
 ## Overview
 
-Migrate from rbenv and nvm to asdf for unified language version management. Create a new asdf role that handles installation, configuration, and default package management for all development languages.
+Migrate from rbenv and nvm to asdf for unified language version management. The asdf role handles installation and shell configuration, while all version and package configuration is managed through the dotfiles repository.
 
 ## Goals
 
@@ -18,7 +19,7 @@ Migrate from rbenv and nvm to asdf for unified language version management. Crea
 
 ## Architecture
 
-### New asdf Role Structure
+### Actual Implementation Structure
 
 ```
 roles/asdf/
@@ -26,20 +27,28 @@ roles/asdf/
 │   ├── main.yml              # Orchestrates all tasks
 │   ├── install.yml           # Install asdf via package manager
 │   ├── configure-shell.yml   # Setup .bashrc and .zshrc
-│   ├── plugins.yml           # Install language plugins
-│   ├── versions.yml          # Install language versions
-│   └── default-packages.yml  # Deploy default package configs
-├── templates/
-│   ├── default-gems.j2
-│   ├── default-npm-packages.j2
-│   ├── default-python-packages.j2
-│   ├── default-elixir-packages.j2
-│   ├── default-golang-packages.j2
-│   └── default-cargo-crates.j2
-├── vars/
-│   └── main.yml             # Default package lists
+│   └── versions.yml          # Run `asdf install` from .tool-versions
 └── defaults/
-    └── main.yml             # Role variables with sensible defaults
+    └── main.yml             # Empty (for future extensions)
+
+roles/dotfiles/
+└── tasks/
+    └── main.yml             # Symlinks .tool-versions and default-* files
+```
+
+### Configuration Files (Managed in dotfiles repository)
+
+All asdf configuration lives in the separate `dotfiles` repository:
+
+```
+dotfiles/asdf/
+├── tool-versions                    # Language versions (symlinked to ~/.tool-versions)
+├── default-gems                     # Ruby gems (symlinked to ~/.default-gems)
+├── default-npm-packages             # Node packages (symlinked to ~/.default-npm-packages)
+├── default-python-packages          # Python packages (symlinked to ~/.default-python-packages)
+├── default-elixir-packages          # Elixir packages (symlinked to ~/.default-elixir-packages)
+├── default-golang-packages          # Go packages (symlinked to ~/.default-golang-packages)
+└── default-cargo-crates             # Rust crates (symlinked to ~/.default-cargo-crates)
 ```
 
 ## Installation & Configuration
@@ -64,27 +73,36 @@ roles/asdf/
 
 ## Language Management
 
-### Plugins
+### Workflow
 
-All plugins defined in `asdf_plugins` variable:
-- ruby, nodejs, erlang, elixir, java, python, R, zig, dotnet, istioctl, maven, gradle, golang, rust
+1. **Dotfiles role** clones the dotfiles repository and symlinks configuration files:
+   - `dotfiles/asdf/tool-versions` → `~/.tool-versions`
+   - `dotfiles/asdf/default-*` → `~/.default-*`
 
-Plugin installation is idempotent - handles "already added" errors gracefully.
-
-### Version Installation
-
-Two approaches supported:
-
-1. **Copy existing .tool-versions** (when `local_tool_versions_path` is defined):
-   ```yaml
-   local_tool_versions_path: /Users/jvargas/.tool-versions
+2. **asdf role** installs asdf, configures the shell, then runs:
+   ```bash
+   asdf install
    ```
 
-2. **Template from variables** (when path not defined):
-   - Generate `.tool-versions` from role variables
-   - Fallback for systems without existing config
+3. **asdf automatically**:
+   - Reads `.tool-versions` to determine which languages and versions to install
+   - Installs plugins on-demand as needed for each language
+   - Installs the specified versions
+   - Installs default packages from `~/.default-*` files for each new language version
 
-After deploying `.tool-versions`, run `asdf install` to install all versions.
+### No Ansible Variables Required
+
+All configuration (versions, packages, plugins) is managed in the dotfiles repository. The Ansible roles just:
+- Install asdf
+- Configure shell integration
+- Symlink dotfiles
+- Run `asdf install`
+
+This approach provides:
+- Version control for all asdf configuration
+- Easy updates (just edit dotfiles and re-run playbook)
+- No duplication between Ansible and dotfiles
+- Single source of truth in dotfiles repository
 
 ## Default Packages
 
