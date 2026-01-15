@@ -8,17 +8,17 @@
   become: true
   apt:
     name: zsh
-  when: ansible_os_family == "Debian"
+  when: ansible_facts["os_family"] == "Debian"
 
 - name: Check if Oh-My-Zsh is already installed
   stat:
-    path: "{{ ansible_env.HOME }}/.oh-my-zsh"
+    path: "{{ ansible_facts["env"]["HOME"] }}/.oh-my-zsh"
   register: ohmyzsh_installed
 
 - name: Clone Oh-My-Zsh framework
   git:
     repo: https://github.com/robbyrussell/oh-my-zsh.git
-    dest: "{{ ansible_env.HOME }}/.oh-my-zsh"
+    dest: "{{ ansible_facts["env"]["HOME"] }}/.oh-my-zsh"
     accept_hostkey: yes
     depth: 1
   when: not ohmyzsh_installed.stat.exists
@@ -28,7 +28,7 @@
   user:
     name: "{{ ansible_user_id }}"
     shell: /bin/zsh
-  when: ansible_os_family == "Debian"
+  when: ansible_facts["os_family"] == "Debian"
 
 # Note for macOS:
 # On macOS, zsh is the default shell since macOS Catalina (10.15).

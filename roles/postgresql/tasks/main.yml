@@ -1,5 +1,5 @@
 - include_tasks: setup-debian.yml
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts["os_family"] == 'Debian'
 
 - block:
   - name: Register postgres status
@@ -9,7 +9,7 @@
   - name: Start postgresql
     command: brew services start postgresql
     when: not postgresql_running | bool
-  when: ansible_os_family == "Darwin"
+  when: ansible_facts["os_family"] == "Darwin"
 
 - block:
     - name: Starting Postgres
@@ -17,13 +17,13 @@
         name: 'postgresql'
         state: 'started'
         enabled: 'yes'
-  when: ansible_os_family == "Debian"
+  when: ansible_facts["os_family"] == "Debian"
 
 - name: Make sure psycopg2 is installed
   pip:
     name: psycopg2
     state: present
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts["os_family"] == 'Debian'
 
 - name: DB user
   postgresql_user:

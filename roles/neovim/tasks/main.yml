@@ -1,7 +1,7 @@
 ---
 
 - include_tasks: setup-debian.yml
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts["os_family"] == 'Debian'
 
 - name: Add nodejs support
   command: npm install -g neovim
@@ -9,27 +9,27 @@
 - name: Add Ruby support
   shell: 'gem install neovim'
   environment:
-    PATH: "{{ ansible_env.HOME }}/.asdf/shims:{{ ansible_env.PATH }}"
+    PATH: "{{ ansible_facts['env']['HOME'] }}/.asdf/shims:{{ ansible_facts['env']['PATH'] }}"
 
 - name: Create config folder
   file:
-    path: "{{ ansible_env.HOME }}/.config/"
+    path: "{{ ansible_facts["env"]["HOME"] }}/.config/"
     state: directory
 
 - name: Create vim config folder
   file:
-    path: "{{ ansible_env.HOME }}/.vim"
+    path: "{{ ansible_facts["env"]["HOME"] }}/.vim"
     state: directory
 
 - name: link .vim to neovim folder
   file:
-    src: "{{ ansible_env.HOME }}/.vim"
-    dest: "{{ ansible_env.HOME }}/.config/nvim"
+    src: "{{ ansible_facts["env"]["HOME"] }}/.vim"
+    dest: "{{ ansible_facts["env"]["HOME"] }}/.config/nvim"
     state: link
 
 - name: link .vimrc to neovim file
   file:
-    src: "{{ ansible_env.HOME }}/.vimrc"
-    dest: "{{ ansible_env.HOME }}/.config/nvim/init.vim"
+    src: "{{ ansible_facts["env"]["HOME"] }}/.vimrc"
+    dest: "{{ ansible_facts["env"]["HOME"] }}/.config/nvim/init.vim"
     state: link
     force: yes

@@ -12,7 +12,7 @@
     name: asdf
     state: present
   when:
-    - ansible_os_family == "Darwin"
+    - ansible_facts["os_family"] == "Darwin"
     - asdf_check.rc != 0
 
 - name: Install asdf (Debian)
@@ -22,7 +22,7 @@
     update_cache: yes
   become: true
   when:
-    - ansible_os_family == "Debian"
+    - ansible_facts["os_family"] == "Debian"
     - asdf_check.rc != 0
 
 - name: Verify asdf installation

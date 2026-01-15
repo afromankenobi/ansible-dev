@@ -8,7 +8,7 @@
       Running preflight checks...
       OS: {{ ansible_distribution }} {{ ansible_distribution_version }}
       Architecture: {{ ansible_architecture }}
-      Home: {{ ansible_env.HOME }}
+      Home: {{ ansible_facts["env"].HOME }}
 
 - name: Check if Homebrew is installed (macOS only)
   block:
@@ -36,7 +36,7 @@
       debug:
         msg: "✅ Homebrew {{ brew_check.stdout_lines[0] }} is installed"
       when: brew_check.rc == 0
-  when: ansible_os_family == "Darwin"
+  when: ansible_facts["os_family"] == "Darwin"
 
 - name: Check if Xcode Command Line Tools are installed (macOS only)
   block:
@@ -59,7 +59,7 @@
       debug:
         msg: "✅ Xcode Command Line Tools installed at {{ xcode_check.stdout }}"
       when: xcode_check.rc == 0
-  when: ansible_os_family == "Darwin"
+  when: ansible_facts["os_family"] == "Darwin"
 
 - name: Check if git is available
   command: git --version
@@ -123,7 +123,7 @@
 - name: Check available disk space
   block:
     - name: Get disk usage
-      shell: df -h {{ ansible_env.HOME }} | tail -1 | awk '{print $4}'
+      shell: df -h {{ ansible_facts["env"].HOME }} | tail -1 | awk '{print $4}'
       register: disk_space
       changed_when: false
 

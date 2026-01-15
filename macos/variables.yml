@@ -1,5 +1,5 @@
 ---
-downloads: "{{ ansible_env.HOME }}/Downloads/ansible"
+downloads: "{{ ansible_facts["env"]["HOME"] }}/Downloads/ansible"
 
 configure_osx: true
 configure_sudoers: false
