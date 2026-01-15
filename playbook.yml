@@ -20,9 +20,8 @@
           include_role:
             name: "{{ item }}"
           loop:
-            - elliotweiser.osx-command-line-tools
             - geerlingguy.mac.homebrew
-            - geerlingguy.mac.dock
+            - geerlingguy.mac.mas
       when: ansible_os_family == "Darwin"
 
     - name: Include Debian setup

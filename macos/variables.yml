@@ -45,8 +45,6 @@ homebrew_taps:
   - d12frosted/emacs-plus
   - elixir-tools/tap
   - github/gh
-  - homebrew/bundle
-  - homebrew/services
   - pagerduty/pd_brews
   # - wtfutil/wtfutil
 
