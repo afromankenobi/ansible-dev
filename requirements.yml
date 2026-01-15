@@ -3,4 +3,4 @@ roles:
   - name: elliotweiser.osx-command-line-tools
 
 collections:
-  - name: geerlingguy.mac:5.0.0
+  - name: geerlingguy.mac
