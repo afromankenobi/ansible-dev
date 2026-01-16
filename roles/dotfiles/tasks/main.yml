@@ -8,98 +8,107 @@
 
 - name: Run preflight checks
   include_tasks: preflight.yml
-  tags: ['preflight', 'always']
 
 # ============================================================================
 # Clone Dotfiles
 # ============================================================================
 
-- name: Check if dotfiles directory exists
-  stat:
-    path: "{{ ansible_facts['env']['HOME'] }}/dotfiles"
-  register: dotfiles_dir
-
-- name: Check for local modifications in dotfiles
-  command: git status --porcelain
-  args:
-    chdir: "{{ ansible_facts['env']['HOME'] }}/dotfiles"
-  register: dotfiles_local_changes
-  changed_when: false
-  failed_when: false
-  when: dotfiles_dir.stat.exists
-
-- name: Stash local changes if any exist
-  command: git stash save "Ansible auto-stash before update"
-  args:
-    chdir: "{{ ansible_facts['env']['HOME'] }}/dotfiles"
-  when:
-    - dotfiles_dir.stat.exists
-    - dotfiles_local_changes.stdout | length > 0
-  register: stash_result
-
 - name: Clone or update dotfiles repository
-  git:
-    repo: git@github.com:afromankenobi/dotfiles.git
-    dest: "{{ ansible_facts['env']['HOME'] }}/dotfiles"
-    accept_hostkey: true
-    update: yes
+  block:
+    - name: Check if dotfiles directory exists
+      stat:
+        path: "{{ ansible_facts['env']['HOME'] }}/dotfiles"
+      register: dotfiles_dir
 
-- name: Pop stashed changes
-  command: git stash pop
-  args:
-    chdir: "{{ ansible_facts['env']['HOME'] }}/dotfiles"
-  when:
-    - stash_result is defined
-    - stash_result.changed
-  register: stash_pop_result
-  failed_when: false
+    - name: Check for local modifications in dotfiles
+      command: git status --porcelain
+      args:
+        chdir: "{{ ansible_facts['env']['HOME'] }}/dotfiles"
+      register: dotfiles_local_changes
+      changed_when: false
+      failed_when: false
+      when: dotfiles_dir.stat.exists
 
-- name: Warn if stash pop had conflicts
-  debug:
-    msg: "⚠️ Warning: Stashed changes were restored but may have conflicts. Check ~/dotfiles for merge conflicts."
-  when:
-    - stash_pop_result is defined
-    - stash_pop_result.rc != 0
+    - name: Stash local changes if any exist
+      command: git stash save "Ansible auto-stash before update"
+      args:
+        chdir: "{{ ansible_facts['env']['HOME'] }}/dotfiles"
+      when:
+        - dotfiles_dir.stat.exists
+        - dotfiles_local_changes.stdout | length > 0
+      register: stash_result
+
+    - name: Clone or update dotfiles repository
+      git:
+        repo: git@github.com:afromankenobi/dotfiles.git
+        dest: "{{ ansible_facts['env']['HOME'] }}/dotfiles"
+        accept_hostkey: true
+        update: yes
+
+    - name: Pop stashed changes
+      command: git stash pop
+      args:
+        chdir: "{{ ansible_facts['env']['HOME'] }}/dotfiles"
+      when:
+        - stash_result is defined
+        - stash_result.changed
+      register: stash_pop_result
+      failed_when: false
+
+    - name: Debug stash_pop_result structure
+      debug:
+        var: stash_pop_result
+      when: stash_pop_result is defined
+
+    - name: Warn if stash pop had conflicts
+      debug:
+        msg: "⚠️ Warning: Stashed changes were restored but may have conflicts. Check ~/dotfiles for merge conflicts."
+      when:
+        - stash_pop_result is defined
+        - stash_pop_result.rc is defined
+        - stash_pop_result.rc != 0
 
 # ============================================================================
 # Symlink configurations
 # ============================================================================
 
-- name: Symlink Vim configuration
-  file:
-    src: "{{ ansible_facts['env']['HOME'] }}/dotfiles/vim/{{ item }}"
-    dest: "{{ ansible_facts['env']['HOME'] }}/.{{ item }}"
-    state: link
-    force: yes
-  with_items:
-    - vimrc
-    - vimrc.bundles
+- name: Symlink configuration files
+  block:
+    - name: Symlink Vim configuration
+      file:
+        src: "{{ ansible_facts['env']['HOME'] }}/dotfiles/vim/{{ item }}"
+        dest: "{{ ansible_facts['env']['HOME'] }}/.{{ item }}"
+        state: link
+        force: yes
+      with_items:
+        - vimrc
+        - vimrc.bundles
 
-- name: Symlink Tmux configuration
-  file:
-    src: "{{ ansible_facts['env']['HOME'] }}/dotfiles/tmux/tmux.conf"
-    dest: "{{ ansible_facts['env']['HOME'] }}/.tmux.conf"
-    state: link
-    force: yes
+    - name: Symlink Tmux configuration
+      file:
+        src: "{{ ansible_facts['env']['HOME'] }}/dotfiles/tmux/tmux.conf"
+        dest: "{{ ansible_facts['env']['HOME'] }}/.tmux.conf"
+        state: link
+        force: yes
 
-- name: Symlink Zsh configuration
-  file:
-    src: "{{ ansible_facts['env']['HOME'] }}/dotfiles/zsh/zshrc"
-    dest: "{{ ansible_facts['env']['HOME'] }}/.zshrc"
-    state: link
-    force: yes
+    - name: Symlink Zsh configuration
+      file:
+        src: "{{ ansible_facts['env']['HOME'] }}/dotfiles/zsh/zshrc"
+        dest: "{{ ansible_facts['env']['HOME'] }}/.zshrc"
+        state: link
+        force: yes
 
-- name: Check if zshrc.local exists
-  stat:
-    path: "{{ ansible_facts['env']['HOME'] }}/.zshrc.local"
-  register: zshrc_example
+    - name: Check if zshrc.local exists
+      stat:
+        path: "{{ ansible_facts['env']['HOME'] }}/.zshrc.local"
+      register: zshrc_example
 
-- name: Create zshrc.local from example if it doesn't exist
-  copy:
-    src: "{{ ansible_facts['env']['HOME'] }}/dotfiles/zsh/zshrc.local.example"
-    dest: "{{ ansible_facts['env']['HOME'] }}/.zshrc.local"
-    force: no
-  when: not zshrc_example.stat.exists
+    - name: Create zshrc.local from example if it doesn't exist
+      copy:
+        src: "{{ ansible_facts['env']['HOME'] }}/dotfiles/zsh/zshrc.local.example"
+        dest: "{{ ansible_facts['env']['HOME'] }}/.zshrc.local"
+        force: no
+      when: not zshrc_example.stat.exists
 
 # ============================================================================
 # Doom Emacs Setup (macOS only)
@@ -183,23 +192,25 @@
 # asdf configuration files
 # ============================================================================
 
-- name: Symlink asdf .tool-versions file
-  file:
-    src: "{{ ansible_facts['env']['HOME'] }}/dotfiles/asdf/tool-versions"
-    dest: "{{ ansible_facts['env']['HOME'] }}/.tool-versions"
-    state: link
-    force: yes
+- name: Symlink asdf configuration
+  block:
+    - name: Symlink asdf .tool-versions file
+      file:
+        src: "{{ ansible_facts['env']['HOME'] }}/dotfiles/asdf/tool-versions"
+        dest: "{{ ansible_facts['env']['HOME'] }}/.tool-versions"
+        state: link
+        force: yes
 
-- name: Symlink asdf default package configurations
-  file:
-    src: "{{ ansible_facts['env']['HOME'] }}/dotfiles/asdf/{{ item }}"
-    dest: "{{ ansible_facts['env']['HOME'] }}/.{{ item }}"
-    state: link
-    force: yes
-  with_items:
-    - default-gems
-    - default-npm-packages
-    - default-python-packages
-    - default-elixir-packages
-    - default-golang-packages
-    - default-cargo-crates
+    - name: Symlink asdf default package configurations
+      file:
+        src: "{{ ansible_facts['env']['HOME'] }}/dotfiles/asdf/{{ item }}"
+        dest: "{{ ansible_facts['env']['HOME'] }}/.{{ item }}"
+        state: link
+        force: yes
+      with_items:
+        - default-gems
+        - default-npm-packages
+        - default-python-packages
+        - default-elixir-packages
+        - default-golang-packages
+        - default-cargo-crates
