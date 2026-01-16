@@ -6,8 +6,8 @@
   debug:
     msg: |
       Running preflight checks...
-      OS: {{ ansible_distribution }} {{ ansible_distribution_version }}
-      Architecture: {{ ansible_architecture }}
+      OS: {{ ansible_facts["distribution"] }} {{ ansible_facts["distribution_version"] }}
+      Architecture: {{ ansible_facts["architecture"] }}
       Home: {{ ansible_facts["env"].HOME }}
 
 - name: Check if Homebrew is installed (macOS only)
@@ -110,15 +110,12 @@
 
           3. Test connection:
              ssh -T git@github.com
-      when:
-        - "'successfully authenticated' not in github_ssh_check.stderr"
-        - "'Hi ' not in github_ssh_check.stderr"
+      when: "'Hi ' not in github_ssh_check.stderr"
 
     - name: Display GitHub SSH status
       debug:
         msg: "✅ GitHub SSH access is configured"
-      when:
-        - "'successfully authenticated' in github_ssh_check.stderr or 'Hi ' in github_ssh_check.stderr"
+      when: "'Hi ' in github_ssh_check.stderr"
 
 - name: Check available disk space
   block:
