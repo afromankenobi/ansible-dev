@@ -4,13 +4,13 @@
 
 - name: Check if .tool-versions file exists
   stat:
-    path: "{{ ansible_facts["env"]["HOME"] }}/.tool-versions"
+    path: "{{ ansible_facts['env']['HOME'] }}/.tool-versions"
   register: tool_versions_file
 
 - name: Install all language versions from .tool-versions
   command: asdf install
   args:
-    chdir: "{{ ansible_facts["env"]["HOME"] }}"
+    chdir: '{{ ansible_facts["env"]["HOME"] }}'
   when: tool_versions_file.stat.exists
   register: asdf_install_result
   changed_when: "'Installing' in asdf_install_result.stdout or 'Installing' in asdf_install_result.stderr"

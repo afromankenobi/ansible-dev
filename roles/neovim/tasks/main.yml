@@ -13,23 +13,23 @@
 
 - name: Create config folder
   file:
-    path: "{{ ansible_facts["env"]["HOME"] }}/.config/"
+    path: "{{ ansible_facts['env']['HOME'] }}/.config/"
     state: directory
 
 - name: Create vim config folder
   file:
-    path: "{{ ansible_facts["env"]["HOME"] }}/.vim"
+    path: "{{ ansible_facts['env']['HOME'] }}/.vim"
     state: directory
 
 - name: link .vim to neovim folder
   file:
-    src: "{{ ansible_facts["env"]["HOME"] }}/.vim"
-    dest: "{{ ansible_facts["env"]["HOME"] }}/.config/nvim"
+    src: "{{ ansible_facts['env']['HOME'] }}/.vim"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.config/nvim"
     state: link
 
 - name: link .vimrc to neovim file
   file:
-    src: "{{ ansible_facts["env"]["HOME"] }}/.vimrc"
-    dest: "{{ ansible_facts["env"]["HOME"] }}/.config/nvim/init.vim"
+    src: "{{ ansible_facts['env']['HOME'] }}/.vimrc"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.config/nvim/init.vim"
     state: link
     force: yes
